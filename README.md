@@ -1,5 +1,5 @@
-# AIBILL RADIUS - Billing System for RTRW.NET
-A modern, full-stack ISP billing and network management platform engineered for RTRW.NET, delivering accurate Nairobi (EAT, UTC+3) time synchronization, integrated M-Pesa payment workflows, automated WhatsApp & SMS notification pipelines, comprehensive PPPoE and Hotspot management, and multi-tenant billing and subscriber management for efficient ISP operations.
+# SKYLINK - Billing System for WISP
+A modern, full-stack ISP billing and network management platform engineered for WISP, delivering accurate Nairobi (EAT, UTC+3) time synchronization, integrated M-Pesa payment workflows, automated WhatsApp & SMS notification pipelines, comprehensive PPPoE and Hotspot management, and multi-tenant billing and subscriber management for efficient ISP operations.
 
 ## 🎯 Key Features
 
@@ -55,5 +55,5 @@ NEXT_PUBLIC_TIMEZONE="Africa/Nairobi"
 ---
 
 
-Made with ❤️ by Mwaki Denis
+Made with ❤️ by Cyberwiz
 
