@@ -9,7 +9,7 @@ export default function AgentLoginPage() {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [companyPhone, setCompanyPhone] = useState('6281234567890'); // Default fallback
+  const [companyPhone, setCompanyPhone] = useState('778884955'); // Default fallback
 
   // Fetch company phone from settings
   useEffect(() => {
@@ -21,9 +21,9 @@ export default function AgentLoginPage() {
           // Use company.phone (for customer service), not adminPhone (for bot)
           if (data.phone) {
             // Remove leading 0 and add 62 if needed
-            let formattedPhone = data.phone.replace(/^0/, '62');
-            if (!formattedPhone.startsWith('62')) {
-              formattedPhone = '62' + formattedPhone;
+            let formattedPhone = data.phone.replace(/^0/, '255');
+            if (!formattedPhone.startsWith('255')) {
+              formattedPhone = '255' + formattedPhone;
             }
             setCompanyPhone(formattedPhone);
           }
@@ -77,7 +77,7 @@ export default function AgentLoginPage() {
             Agent Portal
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Login dengan nomor HP terdaftar
+          Login with registered mobile number
           </p>
         </div>
 
@@ -86,7 +86,7 @@ export default function AgentLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Nomor HP
+                Phone Number
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -97,7 +97,7 @@ export default function AgentLoginPage() {
                   id="phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="08123456789"
+                  placeholder="0743XXXXXX"
                   required
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
@@ -134,9 +134,9 @@ export default function AgentLoginPage() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Belum terdaftar?{' '}
+            Not registered yet?{' '}
               <a href={`https://wa.me/${companyPhone}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 font-medium">
-                Hubungi Admin
+               Contact Admin
               </a>
             </p>
           </div>
@@ -144,7 +144,7 @@ export default function AgentLoginPage() {
 
         {/* Footer */}
         <div className="text-center mt-8 text-sm text-gray-600 dark:text-gray-400">
-          <p>By AIBILL RADIUS</p>
+          <p>By Cyberwiz</p>
         </div>
       </div>
     </div>

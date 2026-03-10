@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { formatToWIB, formatDateOnly, formatTimeOnly, calculateTimeLeft } from "@/lib/utils/dateUtils"
+import { formattoNairobi, formatDateOnly, formatTimeOnly, calculateTimeLeft } from "@/lib/utils/dateUtils"
 import {
   Dialog,
   DialogContent,
@@ -233,7 +233,7 @@ export default function HotspotVoucherPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
-      currency: 'IDR',
+      currency: 'TZS',
       minimumFractionDigits: 0,
     }).format(amount)
   }
@@ -337,8 +337,8 @@ export default function HotspotVoucherPage() {
     }))
 
     const rendered = renderVoucherTemplate(template.htmlTemplate, voucherData, {
-      currencyCode: 'Rp',
-      companyName: 'AIBILL'
+      currencyCode: 'Tsh',
+      companyName: 'Skylink'
     })
 
     const printHtml = getPrintableHtml(rendered)
@@ -887,7 +887,7 @@ export default function HotspotVoucherPage() {
                         )}
                       </TableCell>
                       <TableCell className="text-sm text-gray-500">
-                        {formatToWIB(voucher.createdAt)}
+                        {formattoNairobi(voucher.createdAt)}
                       </TableCell>
                     </TableRow>
                   ))

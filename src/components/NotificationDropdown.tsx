@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Bell, Check, CheckCheck, Trash2, X } from 'lucide-react';
-import { formatWIB } from '@/lib/timezone';
+import { formatNairobi } from '@/lib/timezone';
 import Link from 'next/link';
 
 interface Notification {
@@ -194,7 +194,7 @@ export default function NotificationDropdown() {
                             {notif.message}
                           </p>
                           <p className="text-xs text-gray-400 mt-1">
-                            {formatWIB(notif.createdAt, 'dd MMM yyyy HH:mm')}
+                            {formatNairobi(notif.createdAt, 'dd MMM yyyy HH:mm')}
                           </p>
                         </Link>
                       ) : (
@@ -206,7 +206,7 @@ export default function NotificationDropdown() {
                             {notif.message}
                           </p>
                           <p className="text-xs text-gray-400 mt-1">
-                            {formatWIB(notif.createdAt, 'dd MMM yyyy HH:mm')}
+                            {formatNairobi(notif.createdAt, 'dd MMM yyyy HH:mm')}
                           </p>
                         </>
                       )}

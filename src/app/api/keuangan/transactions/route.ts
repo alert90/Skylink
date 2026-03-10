@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { nanoid } from "nanoid";
-import { startOfDayWIBtoUTC, endOfDayWIBtoUTC } from "@/lib/timezone";
+import { startOfDayNairobiToUTC, endOfDayNairobiToUTC } from "@/lib/timezone";
 
 const prisma = new PrismaClient();
 
@@ -25,9 +25,9 @@ export async function GET(request: NextRequest) {
     if (startDate && endDate) {
       // Convert WIB date string to UTC Date for database query
       // startDate "2025-11-01" (WIB) → "2025-10-31 17:00:00" (UTC)
-      startFilter = startOfDayWIBtoUTC(new Date(startDate + 'T00:00:00'));
+      startFilter = startOfDayNairobiToUTC(new Date(startDate + 'T00:00:00'));
       // endDate "2025-11-01" (WIB) → "2025-11-01 16:59:59" (UTC)
-      endFilter = endOfDayWIBtoUTC(new Date(endDate + 'T23:59:59'));
+      endFilter = endOfDayNairobiToUTC(new Date(endDate + 'T23:59:59'));
     }
 
     // Build where clause
@@ -116,13 +116,13 @@ export async function GET(request: NextRequest) {
 
     // Get income breakdown by category
     const pppoeCategory = await prisma.transactionCategory.findFirst({
-      where: { name: "Pembayaran PPPoE", type: "INCOME" },
+      where: { name: "Payment PPPoE", type: "INCOME" },
     });
     const hotspotCategory = await prisma.transactionCategory.findFirst({
-      where: { name: "Pembayaran Hotspot", type: "INCOME" },
+      where: { name: "Payment Hotspot", type: "INCOME" },
     });
     const installCategory = await prisma.transactionCategory.findFirst({
-      where: { name: "Biaya Instalasi", type: "INCOME" },
+      where: { name: "Installation Costs", type: "INCOME" },
     });
 
     const pppoeIncome = await prisma.transaction.aggregate({

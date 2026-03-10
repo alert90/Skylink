@@ -40,7 +40,7 @@ export default function CustomerDashboard() {
   const [editingWifi, setEditingWifi] = useState(false);
   const [wifiForm, setWifiForm] = useState({ ssid: '', password: '' });
   const [updatingWifi, setUpdatingWifi] = useState(false);
-  const [companyName, setCompanyName] = useState('AIBILL RADIUS');
+  const [companyName, setCompanyName] = useState('SKYLINK');
 
   useEffect(() => {
     loadCompanyName();
@@ -152,7 +152,7 @@ export default function CustomerDashboard() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
-      currency: 'IDR',
+      currency: 'TZS',
       minimumFractionDigits: 0,
     }).format(amount);
   };

@@ -70,7 +70,7 @@ Password
 <table style="width: 100%; border-collapse: collapse;">
 <tr>
 <td style="background: #f0f0f0; text-align: center; padding: 6px 0; font-size: 11px; color: #333; border-top: 1px solid #e0e0e0;">
-AIBILL - {$_c['currency_code']}. {number_format($vs['total'], 0, ',', '.')}
+SKYLINK - {$_c['currency_code']}. {number_format($vs['total'], 0, ',', '.')}
 </td>
 </tr>
 </table>
@@ -212,14 +212,14 @@ export default function VoucherTemplatesPage() {
 
   // Sample vouchers for preview
   const sampleVouchers = [
-    { code: 'DEMO1234', secret: 'DEMO1234', total: 10000 },
-    { code: 'USER5678', secret: 'PASS5678', total: 25000 }
+    { code: 'DEMO1234', secret: 'DEMO1234', total: 1000 },
+    { code: 'USER5678', secret: 'PASS5678', total: 2500 }
   ];
 
   const previewHtml = renderVoucherTemplate(
     formData.htmlTemplate,
     sampleVouchers,
-    { currencyCode: 'Rp', companyName: 'AIBILL' }
+    { currencyCode: 'TZS', companyName: 'SKYLINK' }
   );
 
   return (

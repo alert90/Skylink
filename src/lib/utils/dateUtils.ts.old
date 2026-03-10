@@ -4,7 +4,7 @@
  * Use timezone.ts for proper UTC ↔ WIB conversion
  */
 
-import { toWIB as _toWIB, formatWIB, daysUntilExpiry, relativeWIB, nowWIB as _nowWIB } from '@/lib/timezone'
+import { toNairobi as _toNairobi, formatNairobi, daysUntilExpiry, relativeNairobi, nowNairobi as _nowNairobi } from '@/lib/timezone'
 
 const WIB_TIMEZONE = 'Asia/Jakarta'
 
@@ -12,18 +12,18 @@ const WIB_TIMEZONE = 'Asia/Jakarta'
  * Parse date from database (UTC) and convert to WIB for display
  * Database stores UTC, we convert to WIB timezone
  */
-function toWIB(dateStr: string | Date): Date | null {
-  return _toWIB(dateStr)
+function toNairobi(dateStr: string | Date): Date | null {
+  return _toNairobi(dateStr)
 }
 
 /**
  * Format datetime string (UTC from DB) to WIB display
  */
-export function formatToWIB(dateStr: string | Date): string {
+export function formattoNairobi(dateStr: string | Date): string {
   if (!dateStr) return '-'
   
   try {
-    const wibDate = toWIB(dateStr)
+    const wibDate = toNairobi(dateStr)
     return format(wibDate, 'dd/MM/yyyy HH:mm:ss', { locale: id })
   } catch {
     return 'Invalid Date'
@@ -34,7 +34,7 @@ export function formatDateOnly(dateStr: string | Date): string {
   if (!dateStr) return '-'
   
   try {
-    const wibDate = toWIB(dateStr)
+    const wibDate = toNairobi(dateStr)
     return format(wibDate, 'dd/MM/yyyy', { locale: id })
   } catch {
     return 'Invalid Date'
@@ -45,7 +45,7 @@ export function formatTimeOnly(dateStr: string | Date): string {
   if (!dateStr) return '-'
   
   try {
-    const wibDate = toWIB(dateStr)
+    const wibDate = toNairobi(dateStr)
     return format(wibDate, 'HH:mm:ss', { locale: id })
   } catch {
     return 'Invalid Date'
@@ -57,12 +57,12 @@ export function calculateTimeLeft(expiresAtStr: string | Date): string {
   
   try {
     // Parse expires time from DB (UTC) and convert to WIB
-    const expiresWIB = toWIB(expiresAtStr)
+    const expiresWIB = toNairobi(expiresAtStr)
     
     // Get current time in WIB
-    const nowWIB = toZonedTime(new Date(), WIB_TIMEZONE)
+    const nowNairobi = toZonedTime(new Date(), WIB_TIMEZONE)
     
-    const diff = Math.max(0, Math.floor((expiresWIB.getTime() - nowWIB.getTime()) / 1000))
+    const diff = Math.max(0, Math.floor((expiresWIB.getTime() - nowNairobi.getTime()) / 1000))
     
     const hours = Math.floor(diff / 3600)
     const minutes = Math.floor((diff % 3600) / 60)
@@ -90,10 +90,10 @@ export function formatRelativeTime(dateStr: string | Date): string {
   if (!dateStr) return '-'
   
   try {
-    const wibDate = toWIB(dateStr)
-    const nowWIB = toZonedTime(new Date(), WIB_TIMEZONE)
+    const wibDate = toNairobi(dateStr)
+    const nowNairobi = toZonedTime(new Date(), WIB_TIMEZONE)
     
-    const diffSeconds = Math.floor((nowWIB.getTime() - wibDate.getTime()) / 1000)
+    const diffSeconds = Math.floor((nowNairobi.getTime() - wibDate.getTime()) / 1000)
     
     if (diffSeconds < 60) return 'Just now'
     if (diffSeconds < 3600) return `${Math.floor(diffSeconds / 60)} minutes ago`

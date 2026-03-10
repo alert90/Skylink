@@ -61,29 +61,29 @@ export async function GET(request: NextRequest) {
     // Income breakdown by category
     const pppoeIncome = transactions
       .filter(
-        (t) => t.type === "INCOME" && t.category.name === "Pembayaran PPPoE",
+        (t) => t.type === "INCOME" && t.category.name === "Payment PPPoE",
       )
       .reduce((sum, t) => sum + Number(t.amount), 0);
     const pppoeCount = transactions.filter(
-      (t) => t.type === "INCOME" && t.category.name === "Pembayaran PPPoE",
+      (t) => t.type === "INCOME" && t.category.name === "Payment PPPoE",
     ).length;
 
     const hotspotIncome = transactions
       .filter(
-        (t) => t.type === "INCOME" && t.category.name === "Pembayaran Hotspot",
+        (t) => t.type === "INCOME" && t.category.name === "Payment Hotspot",
       )
       .reduce((sum, t) => sum + Number(t.amount), 0);
     const hotspotCount = transactions.filter(
-      (t) => t.type === "INCOME" && t.category.name === "Pembayaran Hotspot",
+      (t) => t.type === "INCOME" && t.category.name === "Payment Hotspot",
     ).length;
 
     const installIncome = transactions
       .filter(
-        (t) => t.type === "INCOME" && t.category.name === "Biaya Instalasi",
+        (t) => t.type === "INCOME" && t.category.name === "Installation Costs",
       )
       .reduce((sum, t) => sum + Number(t.amount), 0);
     const installCount = transactions.filter(
-      (t) => t.type === "INCOME" && t.category.name === "Biaya Instalasi",
+      (t) => t.type === "INCOME" && t.category.name === "Installation Costs",
     ).length;
 
     if (format === "excel") {

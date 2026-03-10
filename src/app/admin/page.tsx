@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Swal from 'sweetalert2';
-import { formatWIB, getTimezoneInfo } from '@/lib/timezone';
+import { formatNairobi, getTimezoneInfo } from '@/lib/timezone';
 
 interface StatCard {
   title: string;
@@ -76,10 +76,10 @@ export default function AdminDashboard() {
     setMounted(true);
     loadDashboardData();
     loadRadiusStatus();
-    setCurrentTime(formatWIB(new Date(), 'HH:mm:ss'));
+    setCurrentTime(formatNairobi(new Date(), 'HH:mm:ss'));
     
     const timeInterval = setInterval(() => {
-      setCurrentTime(formatWIB(new Date(), 'HH:mm:ss'));
+      setCurrentTime(formatNairobi(new Date(), 'HH:mm:ss'));
     }, 1000);
 
     // Refresh data every 30 seconds
@@ -317,7 +317,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {formatWIB(activity.time, 'HH:mm')}
+                    {formatNairobi(activity.time, 'HH:mm')}
                   </p>
                   <span
                     className={`inline-block px-2 py-1 text-xs font-medium rounded mt-1 ${

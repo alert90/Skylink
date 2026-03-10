@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
-import { nowWIB, startOfDayWIBtoUTC, endOfDayWIBtoUTC } from "@/lib/timezone";
+import { nowNairobi, startOfDayNairobiToUTC, endOfDayNairobiToUTC } from "@/lib/timezone";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -23,12 +23,12 @@ export async function GET(request: NextRequest) {
     console.log('Dashboard stats accessed by role:', userRole);
     // Get current time in WIB timezone (database stores UTC)
     // Use WIB for month boundaries to match user expectations
-    const now = nowWIB();
+    const now = nowNairobi();
     
     // Calculate month boundaries in WIB, convert to UTC for database queries
-    const startOfMonth = startOfDayWIBtoUTC(new Date(now.getFullYear(), now.getMonth(), 1));
-    const startOfLastMonth = startOfDayWIBtoUTC(new Date(now.getFullYear(), now.getMonth() - 1, 1));
-    const endOfLastMonth = endOfDayWIBtoUTC(new Date(now.getFullYear(), now.getMonth(), 0));
+    const startOfMonth = startOfDayNairobiToUTC(new Date(now.getFullYear(), now.getMonth(), 1));
+    const startOfLastMonth = startOfDayNairobiToUTC(new Date(now.getFullYear(), now.getMonth() - 1, 1));
+    const endOfLastMonth = endOfDayNairobiToUTC(new Date(now.getFullYear(), now.getMonth(), 0));
 
     // Total users
     const totalUsers = await prisma.pppoeUser.count();
@@ -130,11 +130,11 @@ export async function GET(request: NextRequest) {
         ? ((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100
         : 0;
 
-    // Format revenue to IDR
+    // Format revenue to TZS
     const formatRevenue = (amount: number) => {
       return new Intl.NumberFormat("id-ID", {
         style: "currency",
-        currency: "IDR",
+        currency: "TZS",
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       }).format(amount);

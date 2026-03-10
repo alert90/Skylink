@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { showSuccess, showError } from '@/lib/sweetalert';
+import { formatCurrency } from '@/lib/utils';
 import {
   UserPlus,
   RefreshCw,
@@ -40,7 +41,7 @@ import {
   FileText,
   Wrench,
 } from 'lucide-react';
-import { formatToWIB } from '@/lib/utils/dateUtils';
+import { formattoNairobi } from '@/lib/utils/dateUtils';
 
 interface Registration {
   id: string;
@@ -202,7 +203,7 @@ export default function RegistrationsPage() {
       const data = await res.json();
 
       if (res.ok) {
-        await showSuccess(`Installation marked as done!\nInvoice: ${data.invoice.invoiceNumber}\nAmount: Rp ${data.invoice.amount.toLocaleString()}`);
+        await showSuccess(`Installation marked as done!\nInvoice: ${data.invoice.invoiceNumber}\nAmount: ${formatCurrency(data.invoice.amount)}`);
         fetchRegistrations();
       } else {
         await showError(data.error || 'Failed to mark installation');
@@ -387,7 +388,7 @@ export default function RegistrationsPage() {
                           {reg.profile.downloadSpeed}/{reg.profile.uploadSpeed} Mbps
                         </div>
                         <div className="text-xs text-green-600 font-medium">
-                          Rp {reg.profile.price.toLocaleString()}/mo
+                          {formatCurrency(reg.profile.price)}/mo
                         </div>
                       </TableCell>
                       <TableCell>{getStatusBadge(reg.status)}</TableCell>
@@ -415,7 +416,7 @@ export default function RegistrationsPage() {
                           <div>
                             <div className="font-mono text-sm">{reg.invoice.invoiceNumber}</div>
                             <div className="text-xs text-gray-600">
-                              Rp {reg.invoice.amount.toLocaleString()}
+                              {formatCurrency(reg.invoice.amount)}
                             </div>
                             <Badge
                               variant="outline"
@@ -434,7 +435,7 @@ export default function RegistrationsPage() {
                           <span className="text-gray-400 text-sm">-</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-sm">{formatToWIB(reg.createdAt)}</TableCell>
+                      <TableCell className="text-sm">{formattoNairobi(reg.createdAt)}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           {reg.status === 'PENDING' && (

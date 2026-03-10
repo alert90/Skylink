@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { toWIB, nowWIB } from '@/lib/timezone';
+import { toNairobi, nowNairobi } from '@/lib/timezone';
 
 const prisma = new PrismaClient();
 
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate statistics from AgentSale table (same as admin page)
     // Use WIB timezone for month calculation (UTC stored in DB)
-    const now = nowWIB();
+    const now = nowNairobi();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
 
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
     // Current month sales - Convert UTC to WIB before comparison
     const currentMonthSales = allSales.filter((sale) => {
-      const saleDate = toWIB(sale.createdAt);
+      const saleDate = toNairobi(sale.createdAt);
       if (!saleDate) return false;
       return (
         saleDate.getMonth() === currentMonth &&

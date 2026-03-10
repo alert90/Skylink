@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { showSuccess, showError, showConfirm } from "@/lib/sweetalert";
-import { formatWIB } from "@/lib/timezone";
+import { formatNairobi } from "@/lib/timezone";
 import {
   Dialog,
   DialogContent,
@@ -369,14 +369,14 @@ export default function KeuanganPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
-      currency: "IDR",
+      currency: "TZS",
       minimumFractionDigits: 0,
     }).format(amount);
   };
 
   const formatDate = (date: string) => {
     // Convert UTC date from DB to WIB for display
-    return formatWIB(new Date(date), 'd MMM yyyy');
+    return formatNairobi(new Date(date), 'd MMM yyyy');
   };
 
   const resetFilters = () => {
@@ -465,7 +465,7 @@ export default function KeuanganPage() {
       finalY + 10,
     );
     doc.text(
-      `  - Instalasi: ${formatCurrency(stats.installIncome)} (${stats.installCount}x)`,
+      `  - Installation: ${formatCurrency(stats.installIncome)} (${stats.installCount}x)`,
       18,
       finalY + 15,
     );
@@ -524,10 +524,10 @@ export default function KeuanganPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-            Manajemen Keuangan
+            Sales Management
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Track income & expenses untuk bisnis Anda
+            Track income & expenses
           </p>
         </div>
         <div className="flex gap-2">
@@ -583,7 +583,7 @@ export default function KeuanganPage() {
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-gray-600 dark:text-gray-400">
-                  Instalasi:
+                  Installation:
                 </span>
                 <span className="font-semibold text-gray-700 dark:text-gray-300">
                   {formatCurrency(stats.installIncome || 0)} (
@@ -667,21 +667,21 @@ export default function KeuanganPage() {
               size="sm"
               onClick={() => setQuickDate("thisMonth")}
             >
-              Bulan Ini
+              This Month
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setQuickDate("lastMonth")}
             >
-              Bulan Lalu
+              Last Month
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setQuickDate("thisYear")}
             >
-              Tahun Ini
+              This Year
             </Button>
           </div>
           
@@ -690,7 +690,7 @@ export default function KeuanganPage() {
             <Label>Search</Label>
             <Input
               type="text"
-              placeholder="Cari berdasarkan deskripsi atau reference..."
+              placeholder="Search by description or reference..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="max-w-md"
@@ -778,7 +778,7 @@ export default function KeuanganPage() {
           </div>
           {(!startDate || !endDate) && (
             <p className="text-xs text-gray-500 mt-2">
-              * Pilih Start Date dan End Date untuk mengaktifkan export
+             * Select Start Date and End Date to activate export
             </p>
           )}
         </CardHeader>
@@ -972,7 +972,7 @@ export default function KeuanganPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="amount">Amount (IDR) *</Label>
+                <Label htmlFor="amount">Amount (TZS) *</Label>
                 <Input
                   id="amount"
                   type="number"

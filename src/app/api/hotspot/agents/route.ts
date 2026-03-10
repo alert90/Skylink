@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { WhatsAppService } from '@/lib/whatsapp';
-import { toWIB, nowWIB } from '@/lib/timezone';
+import { toNairobi, nowNairobi } from '@/lib/timezone';
 
 const prisma = new PrismaClient();
 
@@ -23,13 +23,13 @@ export async function GET() {
     // Calculate statistics for each agent
     const agentsWithStats = agents.map((agent) => {
       // Use WIB timezone for month calculation (UTC stored in DB)
-      const now = nowWIB();
+      const now = nowNairobi();
       const currentMonth = now.getMonth();
       const currentYear = now.getFullYear();
 
       // Current month sales - Convert UTC to WIB before comparison
       const currentMonthSales = agent.sales.filter((sale) => {
-        const saleDate = toWIB(sale.createdAt);
+        const saleDate = toNairobi(sale.createdAt);
         if (!saleDate) return false;
         return (
           saleDate.getMonth() === currentMonth &&
@@ -116,29 +116,29 @@ export async function POST(request: NextRequest) {
       const company = await prisma.company.findFirst();
       const baseUrl = company?.baseUrl || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
       const agentPortalUrl = `${baseUrl}/agent`;
-      const companyName = company?.name || 'AIBILL';
+      const companyName = company?.name || 'SKYLINK';
       const companyPhone = company?.phone || '';
 
-      const message = `🎉 *Selamat Bergabung sebagai Agent!*\n\n` +
-        `Halo *${name}*,\n\n` +
-        `Anda telah terdaftar sebagai agent ${companyName}. ` +
-        `Sekarang Anda dapat menjual voucher internet dan mendapatkan komisi!\n\n` +
+      const message = `🎉 *Welcome to join as an agent!*\n\n` +
+        `Habari *${name}*,\n\n` +
+        `You have registered as an agent ${companyName}. ` +
+        `Now you can sell internet vouchers and earn commission!\n\n` +
         `━━━━━━━━━━━━━━━━━━\n\n` +
-        `📱 *Akses Agent Portal:*\n` +
+        `📱 *Access Agent Portal:*\n` +
         `${agentPortalUrl}\n\n` +
-        `🔐 *Login dengan:*\n` +
-        `Nomor HP: *${phone}*\n\n` +
+        `🔐 *Login with:*\n` +
+        `Phone NO: *${phone}*\n\n` +
         `━━━━━━━━━━━━━━━━━━\n\n` +
-        `✨ *Fitur Agent Portal:*\n` +
-        `• Generate voucher hotspot\n` +
-        `• Lihat riwayat penjualan\n` +
-        `• Monitor komisi\n` +
-        `• Download voucher dalam format PDF\n\n` +
-        `💰 *Info Komisi:*\n` +
-        `Anda akan mendapat komisi dari setiap voucher yang terjual. ` +
-        `Komisi akan tercatat otomatis di dashboard Anda.\n\n` +
-        `📞 Butuh bantuan? Hubungi: ${companyPhone}\n\n` +
-        `Selamat berjualan! 🚀\n${companyName}`;
+        `✨ *Agent Portal feature:*\n` +
+        `• Generate wifi voucher\n` +
+        `• View sales history\n` +
+        `• Monitor commissions\n` +
+        `• Download voucher in PDF format\n\n` +
+        `💰 *Commission Info:*\n` +
+        `You will get a commission from every voucher sold. ` +
+        `Commissions will be automatically recorded on your dashboard.\n\n` +
+        `📞 Need help? Get in touch: ${companyPhone}\n\n` +
+        `Happy selling! 🚀\n${companyName}`;
 
       await WhatsAppService.sendMessage({
         phone: phone,

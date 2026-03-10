@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { WhatsAppService } from '@/lib/whatsapp'
+import { formatCurrency } from '@/lib/utils'
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
 
     // Get company info
     const company = await prisma.company.findFirst()
-    const companyName = company?.name || 'AIBILL'
+    const companyName = company?.name || 'SKYLINK'
     const companyPhone = company?.phone || ''
 
     // Build voucher message
@@ -27,23 +28,23 @@ export async function POST(request: Request) {
     vouchers.forEach((v: any, idx: number) => {
       message += `*Voucher ${idx + 1}*\n`
       message += `🔑 Code: *${v.code}*\n`
-      message += `📦 Paket: ${v.profileName}\n`
-      message += `💰 Harga: Rp ${v.price.toLocaleString('id-ID')}\n`
-      message += `⏳ Masa Aktif: ${v.validity}\n\n`
+      message += `📦 Package: ${v.profileName}\n`
+      message += `💰 Price: ${formatCurrency(v.price)}\n`
+      message += `⏳ Active Period: ${v.validity}\n\n`
     })
 
     message += `━━━━━━━━━━━━━━━━━━\n\n`
-    message += `📌 *Cara Menggunakan:*\n`
-    message += `1. Hubungkan ke WiFi hotspot kami\n`
-    message += `2. Buka browser, akan muncul halaman login\n`
-    message += `3. Masukkan kode voucher\n`
-    message += `4. Klik Login dan nikmati internet!\n\n`
-    message += `⚠️ *Penting:*\n`
-    message += `• Voucher akan aktif setelah login pertama\n`
-    message += `• Simpan kode voucher dengan baik\n`
-    message += `• Masa aktif dihitung sejak login pertama\n\n`
-    message += `📞 Butuh bantuan? Hubungi: ${companyPhone}\n\n`
-    message += `Terima kasih! 🙏\n${companyName}`
+    message += `📌 *How to Use:*\n`
+    message += `1. Connect to our WiFi hotspot\n`
+    message += `2. Open the browser, the login page will appear\\n`
+    message += `3. Enter the voucher code\n`
+    message += `4. Click Login and enjoy the internet!\n\n`
+    message += `⚠️ *Important:*\n`
+    message += `• Voucher will be active after first login\n`
+    message += `• Please keep the voucher code safe\n`
+    message += `• The active period is calculated from the first login\n\n`
+    message += `📞 Need help? Contact us: ${companyPhone}\n\n`
+    message += `Thank You! 🙏\n${companyName}`
 
     // Send WhatsApp
     await WhatsAppService.sendMessage({

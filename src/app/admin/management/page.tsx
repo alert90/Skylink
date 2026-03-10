@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Users, Plus, Edit2, Trash2, Shield, Eye, EyeOff, Key, Loader2 } from 'lucide-react';
-import { formatWIB } from '@/lib/timezone';
+import { formatNairobi } from '@/lib/timezone';
 import PermissionCheckboxes from '@/components/PermissionCheckboxes';
 import { usePermissions } from '@/hooks/usePermissions';
 import { showSuccess, showError, showConfirm } from '@/lib/sweetalert';
@@ -288,7 +288,7 @@ export default function AdminManagementPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                      {user.lastLogin ? formatWIB(user.lastLogin, 'dd MMM yyyy HH:mm') : '-'}
+                      {user.lastLogin ? formatNairobi(user.lastLogin, 'dd MMM yyyy HH:mm') : '-'}
                     </td>
                     <td className="px-6 py-4 text-right space-x-2">
                       {canEdit && (

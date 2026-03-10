@@ -11,7 +11,7 @@ export const translations = {
     agent: 'Agen',
     invoices: 'Tagihan',
     paymentGateway: 'Payment Gateway',
-    keuangan: 'Keuangan',
+    keuangan: 'Finance',
     sessions: 'Sesi',
     whatsapp: 'WhatsApp',
     setup: 'Pengaturan',

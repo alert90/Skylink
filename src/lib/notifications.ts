@@ -1,4 +1,5 @@
 import { prisma } from './prisma';
+import { formatCurrency } from './utils';
 
 export const NotificationService = {
   /**
@@ -197,7 +198,7 @@ export const NotificationService = {
     return await this.create({
       type: 'payment_received',
       title: 'Payment Received',
-      message: `Payment of Rp ${payment.amount.toLocaleString('id-ID')} received`,
+      message: `Payment of ${formatCurrency(payment.amount)} received`,
       link: `/admin/invoices?id=${payment.invoiceId}`,
     });
   },

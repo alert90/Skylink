@@ -168,7 +168,7 @@ export default function WhatsAppHistoryPage() {
           WhatsApp History
         </h1>
         <p className="text-gray-500 mt-1">
-          Riwayat pengiriman pesan WhatsApp dengan detail status dan provider
+         WhatsApp message delivery history with status and provider details
         </p>
       </div>
 
@@ -178,12 +178,12 @@ export default function WhatsAppHistoryPage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <MessageSquare className="h-4 w-4 text-blue-600" />
-              Total Pesan
+              Total Messages
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="text-xs text-gray-500 mt-1">Semua pesan</p>
+            <p className="text-xs text-gray-500 mt-1">All messages</p>
           </CardContent>
         </Card>
 
@@ -191,12 +191,12 @@ export default function WhatsAppHistoryPage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
-              Terkirim (24j)
+              Sent (24h)
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{stats.sent}</div>
-            <p className="text-xs text-gray-500 mt-1">Berhasil terkirim</p>
+            <p className="text-xs text-gray-500 mt-1">Sent successfully</p>
           </CardContent>
         </Card>
 
@@ -204,12 +204,12 @@ export default function WhatsAppHistoryPage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <XCircle className="h-4 w-4 text-red-600" />
-              Gagal (24j)
+              Failed (24h)
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{stats.failed}</div>
-            <p className="text-xs text-gray-500 mt-1">Gagal terkirim</p>
+            <p className="text-xs text-gray-500 mt-1">Failed to send</p>
           </CardContent>
         </Card>
 
@@ -217,12 +217,12 @@ export default function WhatsAppHistoryPage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-purple-600" />
-              Aktivitas (24j)
+              Activity (24h)
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600">{stats.last24Hours}</div>
-            <p className="text-xs text-gray-500 mt-1">Total pengiriman</p>
+            <p className="text-xs text-gray-500 mt-1">Total delivery</p>
           </CardContent>
         </Card>
       </div>
@@ -230,8 +230,8 @@ export default function WhatsAppHistoryPage() {
       {/* Filters and Search */}
       <Card>
         <CardHeader>
-          <CardTitle>Filter & Pencarian</CardTitle>
-          <CardDescription>Filter pesan berdasarkan status dan cari nomor/pesan</CardDescription>
+          <CardTitle>Filters & Search</CardTitle>
+          <CardDescription>Filter messages by status and search for numbers/messages</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4 flex-wrap">
@@ -244,7 +244,7 @@ export default function WhatsAppHistoryPage() {
                   setPage(1);
                 }}
               >
-                Semua
+                All
               </Button>
               <Button
                 variant={statusFilter === 'sent' ? 'default' : 'outline'}
@@ -256,7 +256,7 @@ export default function WhatsAppHistoryPage() {
                 className={statusFilter === 'sent' ? 'bg-green-600 hover:bg-green-700' : ''}
               >
                 <CheckCircle className="h-4 w-4 mr-1" />
-                Terkirim
+                Sent
               </Button>
               <Button
                 variant={statusFilter === 'failed' ? 'default' : 'outline'}
@@ -268,13 +268,13 @@ export default function WhatsAppHistoryPage() {
                 className={statusFilter === 'failed' ? 'bg-red-600 hover:bg-red-700' : ''}
               >
                 <XCircle className="h-4 w-4 mr-1" />
-                Gagal
+                Failed
               </Button>
             </div>
 
             <div className="flex gap-2 flex-1 min-w-[300px]">
               <Input
-                placeholder="Cari nomor atau pesan..."
+                placeholder="Search for number or message..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -290,9 +290,9 @@ export default function WhatsAppHistoryPage() {
       {/* History Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Riwayat Pesan</CardTitle>
+          <CardTitle>Message History</CardTitle>
           <CardDescription>
-            Menampilkan {history.length} dari total pesan yang tercatat
+           Displays {history.length} of total recorded messages
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -303,7 +303,7 @@ export default function WhatsAppHistoryPage() {
           ) : history.length === 0 ? (
             <div className="text-center py-12 text-gray-400">
               <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>Belum ada riwayat pesan</p>
+              <p>No message history yet</p>
             </div>
           ) : (
             <>
@@ -311,12 +311,12 @@ export default function WhatsAppHistoryPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Waktu</TableHead>
-                      <TableHead>Nomor</TableHead>
-                      <TableHead>Pesan</TableHead>
+                      <TableHead>Time</TableHead>
+                      <TableHead>Number</TableHead>
+                      <TableHead>Message</TableHead>
                       <TableHead>Provider</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-center">Aksi</TableHead>
+                      <TableHead className="text-center">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -334,7 +334,7 @@ export default function WhatsAppHistoryPage() {
                           </div>
                           <div className="text-xs text-gray-500 mt-1">
                             {new Date(item.sentAt).toLocaleString('id-ID', { 
-                              timeZone: 'Asia/Jakarta',
+                              timeZone: 'Africa/Dar_Es_Salaam',
                               dateStyle: 'short',
                               timeStyle: 'short'
                             })}
@@ -367,12 +367,12 @@ export default function WhatsAppHistoryPage() {
                           {item.status === 'sent' ? (
                             <Badge className="bg-green-600">
                               <CheckCircle className="h-3 w-3 mr-1" />
-                              Terkirim
+                              Sent
                             </Badge>
                           ) : (
                             <Badge className="bg-red-600">
                               <XCircle className="h-3 w-3 mr-1" />
-                              Gagal
+                              Failed
                             </Badge>
                           )}
                         </TableCell>
@@ -394,7 +394,7 @@ export default function WhatsAppHistoryPage() {
               {/* Pagination */}
               <div className="flex items-center justify-between mt-4">
                 <div className="text-sm text-gray-500">
-                  Halaman {page} dari {totalPages}
+                 Page {page} of {totalPages}
                 </div>
                 <div className="flex gap-2">
                   <Button

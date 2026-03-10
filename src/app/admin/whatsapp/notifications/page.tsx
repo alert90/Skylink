@@ -121,8 +121,8 @@ export default function NotificationSettingsPage() {
   }
 
   const formatDayLabel = (day: number) => {
-    if (day === 0) return "H (Hari Expired)"
-    return `H${day} (${Math.abs(day)} hari sebelum expired)`
+    if (day === 0) return "D (Day Expired)"
+    return `D${day} (${Math.abs(day)} day before it expires)`
   }
 
   if (loading) {
@@ -139,9 +139,9 @@ export default function NotificationSettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Notifikasi WhatsApp</h1>
+        <h1 className="text-3xl font-bold">WhatsApp notifications</h1>
         <p className="text-gray-500 mt-1">
-          Atur pengiriman notifikasi reminder invoice & OTP login customer
+         Set up sending of invoice reminder notifications & customer login OTP
         </p>
       </div>
 
@@ -153,17 +153,17 @@ export default function NotificationSettingsPage() {
             Invoice Reminder Settings
           </CardTitle>
           <CardDescription>
-            Konfigurasi kapan sistem akan mengirim reminder invoice ke customer
+           Configure when the system will send invoice reminders to customers.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
             <div className="flex-1">
               <Label htmlFor="enabled" className="text-base font-medium">
-                Aktifkan Reminder Otomatis
+               Enable Automatic Reminder
               </Label>
               <p className="text-sm text-gray-500 mt-1">
-                Kirim notifikasi WhatsApp otomatis untuk invoice yang akan jatuh tempo
+               Send automatic WhatsApp notifications for invoices that are due
               </p>
             </div>
             <Switch
@@ -176,7 +176,7 @@ export default function NotificationSettingsPage() {
           <div className="space-y-2">
             <Label htmlFor="reminderTime" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Jam Pengiriman (WIB)
+              Delivery Time (WIB)
             </Label>
             <Input
               id="reminderTime"
@@ -186,20 +186,20 @@ export default function NotificationSettingsPage() {
               className="max-w-xs"
             />
             <p className="text-sm text-gray-500">
-              Notifikasi akan dikirim pada jam ini setiap harinya
+             Notifications will be sent at this time every day
             </p>
           </div>
 
           <div className="space-y-3">
-            <Label className="text-base font-medium">Jadwal Reminder</Label>
+            <Label className="text-base font-medium">Reminder Schedule</Label>
             <p className="text-sm text-gray-500">
-              Tentukan kapan reminder akan dikirim (relatif terhadap tanggal expired)
+             Specify when the reminder will be sent (relative to the expiration date)
             </p>
 
             <div className="flex flex-wrap gap-2">
               {reminderDays.length === 0 ? (
                 <div className="text-sm text-gray-400 italic">
-                  Belum ada jadwal reminder
+                  There is no reminder schedule yet
                 </div>
               ) : (
                 reminderDays.map((day) => (
@@ -231,11 +231,11 @@ export default function NotificationSettingsPage() {
               />
               <Button onClick={addReminderDay} variant="outline">
                 <Plus className="h-4 w-4 mr-2" />
-                Tambah
+                Add
               </Button>
             </div>
             <p className="text-xs text-gray-500">
-              Contoh: -7 untuk H-7 (7 hari sebelum expired), 0 untuk hari H (hari expired)
+             Example: -7 for D-7 (7 days before expiry), 0 for day D (expiry day)
             </p>
           </div>
         </CardContent>
@@ -249,17 +249,17 @@ export default function NotificationSettingsPage() {
             Customer OTP Login
           </CardTitle>
           <CardDescription>
-            Pengaturan OTP untuk login customer self-service portal
+           OTP settings for customer self-service portal login
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
             <div className="flex-1">
               <Label htmlFor="otpEnabled" className="text-base font-medium">
-                Aktifkan OTP Login
+                Enable OTP Login
               </Label>
               <p className="text-sm text-gray-500 mt-1">
-                Customer bisa login menggunakan OTP via WhatsApp
+                Customers can log in using OTP via WhatsApp
               </p>
             </div>
             <Switch
@@ -272,7 +272,7 @@ export default function NotificationSettingsPage() {
           <div className="space-y-2">
             <Label htmlFor="otpExpiry" className="flex items-center gap-2">
               <Timer className="h-4 w-4" />
-              Masa Berlaku OTP (Menit)
+              OTP Validity Time (Minutes)
             </Label>
             <Input
               id="otpExpiry"
@@ -284,14 +284,14 @@ export default function NotificationSettingsPage() {
               className="max-w-xs"
             />
             <p className="text-sm text-gray-500">
-              Kode OTP akan expired setelah {otpExpiry} menit
+             OTP code will expire after {otpExpiry} minutes
             </p>
           </div>
 
           {!otpEnabled && (
             <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                ⚠️ Customer tidak akan bisa login ke portal self-service jika OTP dinonaktifkan
+              ⚠️ Customers will not be able to log in to the self-service portal if OTP is disabled.
               </p>
             </div>
           )}
@@ -308,12 +308,12 @@ export default function NotificationSettingsPage() {
           {saving ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Menyimpan...
+              Saving...
             </>
           ) : (
             <>
               <Save className="h-4 w-4 mr-2" />
-              Simpan Pengaturan
+              Save Settings
             </>
           )}
         </Button>

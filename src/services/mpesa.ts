@@ -49,7 +49,7 @@ export async function stkPush(phone: string, amount: number) {
     PartyB: shortcode,
     PhoneNumber: phone,
     CallBackURL: callbackUrl,
-    AccountReference: "AIBILL",
+    AccountReference: "SKYLINK",
     TransactionDesc: "Payment for services",
   };
 

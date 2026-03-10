@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { showSuccess, showError, showConfirm, showToast } from '@/lib/sweetalert';
-import { formatWIB } from '@/lib/timezone';
+import { formatNairobi } from '@/lib/timezone';
 import {
   Dialog,
   DialogContent,
@@ -219,14 +219,14 @@ export default function InvoicesPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
-      currency: 'IDR',
+      currency: 'TZS',
       minimumFractionDigits: 0,
     }).format(amount);
   };
 
   const formatDate = (dateStr: string) => {
     // Convert UTC date from DB to WIB for display
-    return formatWIB(new Date(dateStr), 'd MMM yyyy');
+    return formatNairobi(new Date(dateStr), 'd MMM yyyy');
   };
 
   const getStatusBadge = (status: string) => {

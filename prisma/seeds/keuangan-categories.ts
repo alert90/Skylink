@@ -105,7 +105,7 @@ export async function seedKeuanganCategories() {
     }
   }
 
-  console.log('✅ Keuangan Categories seeding completed!\n');
+  console.log('✅ Financial Categories seeding completed!\n');
 }
 
 // Run if called directly

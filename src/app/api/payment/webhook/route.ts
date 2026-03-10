@@ -4,6 +4,7 @@ import { syncVoucherToRadius } from '@/lib/hotspot-radius-sync';
 import { sendPaymentSuccess, sendVoucherPurchaseSuccess } from '@/lib/whatsapp-notifications';
 import crypto from 'crypto';
 import { nanoid } from 'nanoid';
+import { formatCurrency } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,8 +54,123 @@ export async function POST(request: Request) {
     // DETECT PAYMENT GATEWAY
     // ============================================
     
+    // MPESA Detection
+    if (body.Body && body.Body.stkCallback) {
+      gateway = 'mpesa';
+      const callback = body.Body.stkCallback;
+      orderId = callback.CallbackMetadata?.Item?.find((item: any) => item.Name === 'AccountReference')?.Value || '';
+      transactionId = callback.MerchantRequestID || '';
+      paymentType = 'stk_push';
+      
+      if (callback.ResultCode === '0') {
+        status = 'settlement';
+        paidAt = new Date();
+        const amountItem = callback.CallbackMetadata?.Item?.find((item: any) => item.Name === 'Amount');
+        amount = amountItem ? parseInt(amountItem.Value) : undefined;
+        const phoneItem = callback.CallbackMetadata?.Item?.find((item: any) => item.Name === 'PhoneNumber');
+        // Store phone number if needed for logging
+      } else {
+        status = 'failed';
+      }
+      
+      console.log('[M-Pesa] Webhook processed');
+    }
+    // SELCOM Detection
+    else if (payload.order_id && payload.payment_status) {
+      gateway = 'selcom';
+      orderId = payload.order_id;
+      transactionId = payload.transid || '';
+      paymentType = payload.channel || 'mobile_money';
+      amount = payload.amount ? parseInt(payload.amount) : undefined;
+      
+      if (payload.payment_status === 'COMPLETED') {
+        status = 'settlement';
+        paidAt = new Date();
+      } else if (payload.payment_status === 'PENDING') {
+        status = 'pending';
+      } else {
+        status = 'failed';
+      }
+      
+      // Verify Selcom signature
+      const gatewayConfig = await prisma.paymentGateway.findUnique({
+        where: { provider: 'selcom' }
+      });
+      
+      if (gatewayConfig?.selcomSecretKey) {
+        const receivedSignature = request.headers.get('digest');
+        const timestamp = request.headers.get('request_timestamp');
+        
+        if (receivedSignature && timestamp) {
+          const digest1 = crypto.createHash('md5').update(timestamp + gatewayConfig.selcomSecretKey).digest('hex');
+          const digest2 = crypto.createHash('sha1').update(timestamp + gatewayConfig.selcomApiKey + gatewayConfig.selcomSecretKey).digest('hex');
+          const expectedSignature = digest1 + digest2;
+          
+          if (receivedSignature !== expectedSignature) {
+            console.error('[Selcom] Invalid signature');
+            return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+          }
+        }
+      }
+      
+      console.log('[Selcom] Webhook processed');
+    }
+    // PESAPAL Detection
+    else if (payload.order_id && payload.status) {
+      gateway = 'pesapal';
+      orderId = payload.order_id;
+      transactionId = payload.transaction_id || '';
+      paymentType = 'mobile';
+      amount = payload.amount ? parseFloat(payload.amount) : undefined;
+      
+      if (payload.status === 'completed') {
+        status = 'settlement';
+        paidAt = new Date();
+      } else if (payload.status === 'pending') {
+        status = 'pending';
+      } else {
+        status = 'failed';
+      }
+      
+      // Verify Pesapal signature
+      const gatewayConfig = await prisma.paymentGateway.findUnique({
+        where: { provider: 'pesapal' }
+      });
+      
+      if (gatewayConfig?.pesapalSecretKey) {
+        const receivedSignature = request.headers.get('x-signature');
+        const timestamp = request.headers.get('x-timestamp');
+        
+        if (receivedSignature && timestamp) {
+          const params = {
+            merchant_id: gatewayConfig.pesapalMerchantId,
+            order_id: orderId,
+            timestamp: timestamp,
+            secret_key: gatewayConfig.pesapalSecretKey
+          };
+          
+          const sortedKeys = Object.keys(params).sort();
+          let queryString = '';
+          
+          sortedKeys.forEach((key, index) => {
+            if (index > 0) queryString += '&';
+            queryString += `${key}=${params[key as keyof typeof params]}`;
+          });
+          
+          const signatureString = `${queryString}&${gatewayConfig.pesapalSecretKey}`;
+          const expectedSignature = crypto.createHash('sha256').update(signatureString).digest('hex');
+          
+          if (receivedSignature !== expectedSignature) {
+            console.error('[Pesapal] Invalid signature');
+            return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+          }
+        }
+      }
+      
+      console.log('[Pesapal] Webhook processed');
+    }
     // MIDTRANS Detection
-    if (payload.order_id && payload.transaction_status) {
+    else if (payload.order_id && payload.transaction_status) {
       gateway = 'midtrans';
       orderId = payload.order_id;
       transactionId = payload.transaction_id || '';
@@ -577,7 +693,7 @@ async function handleInvoicePayment(
                         ${`INV-${invoice.invoiceNumber}`}, 
                         ${`Payment via ${gateway} (${paymentType})`}, NOW(), NOW())
               `;
-              console.log(`✅ Transaction synced to Keuangan: ${invoice.invoiceNumber} (Rp ${invoice.amount})`);
+              console.log(`✅ Transaction synced to Keuangan: ${invoice.invoiceNumber} (${formatCurrency(invoice.amount)})`);
             } else {
               console.log(`⏭️  Transaction already exists for: ${invoice.invoiceNumber}`);
             }

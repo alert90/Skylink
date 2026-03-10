@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Bell, Check, CheckCheck, Trash2, Loader2 } from 'lucide-react';
-import { formatWIB } from '@/lib/timezone';
+import { formatNairobi } from '@/lib/timezone';
 import Link from 'next/link';
 
 interface Notification {
@@ -223,7 +223,7 @@ export default function NotificationsPage() {
                           {notif.message}
                         </p>
                         <p className="text-sm text-gray-500 mt-2">
-                          {formatWIB(notif.createdAt, 'dd MMM yyyy HH:mm:ss')}
+                          {formatNairobi(notif.createdAt, 'dd MMM yyyy HH:mm:ss')}
                         </p>
                       </Link>
                     ) : (
@@ -235,7 +235,7 @@ export default function NotificationsPage() {
                           {notif.message}
                         </p>
                         <p className="text-sm text-gray-500 mt-2">
-                          {formatWIB(notif.createdAt, 'dd MMM yyyy HH:mm:ss')}
+                          {formatNairobi(notif.createdAt, 'dd MMM yyyy HH:mm:ss')}
                         </p>
                       </>
                     )}

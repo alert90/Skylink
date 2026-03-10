@@ -1,6 +1,6 @@
 'use client';
 import { showSuccess, showError, showConfirm, showToast } from '@/lib/sweetalert';
-import { formatWIB } from '@/lib/timezone';
+import { formatNairobi } from '@/lib/timezone';
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,6 +42,20 @@ interface PaymentGateway {
   duitkuMerchantCode?: string | null;
   duitkuApiKey?: string | null;
   duitkuEnvironment: string;
+  // New payment gateways
+  mpesaConsumerKey?: string | null;
+  mpesaConsumerSecret?: string | null;
+  mpesaPasskey?: string | null;
+  mpesaShortcode?: string | null;
+  mpesaEnvironment: string;
+  selcomApiKey?: string | null;
+  selcomSecretKey?: string | null;
+  selcomVendorName?: string | null;
+  selcomEnvironment: string;
+  pesapalMerchantId?: string | null;
+  pesapalApiKey?: string | null;
+  pesapalSecretKey?: string | null;
+  pesapalEnvironment: string;
 }
 
 interface WebhookLog {
@@ -94,6 +108,31 @@ export default function PaymentGatewayPage() {
     isActive: false
   });
 
+  const [mpesaForm, setMpesaForm] = useState({
+    consumerKey: '',
+    consumerSecret: '',
+    passkey: '',
+    shortcode: '',
+    environment: 'sandbox',
+    isActive: false
+  });
+
+  const [selcomForm, setSelcomForm] = useState({
+    apiKey: '',
+    secretKey: '',
+    vendorName: '',
+    environment: 'sandbox',
+    isActive: false
+  });
+
+  const [pesapalForm, setPesapalForm] = useState({
+    merchantId: '',
+    apiKey: '',
+    secretKey: '',
+    environment: 'sandbox',
+    isActive: false
+  });
+
   useEffect(() => {
     fetchConfigs();
     fetchWebhookLogs();
@@ -138,6 +177,40 @@ export default function PaymentGatewayPage() {
           apiKey: duitku.duitkuApiKey || '',
           environment: duitku.duitkuEnvironment || 'sandbox',
           isActive: duitku.isActive
+        });
+      }
+
+      const mpesa = data.find((c: PaymentGateway) => c.provider === 'mpesa');
+      if (mpesa) {
+        setMpesaForm({
+          consumerKey: mpesa.mpesaConsumerKey || '',
+          consumerSecret: mpesa.mpesaConsumerSecret || '',
+          passkey: mpesa.mpesaPasskey || '',
+          shortcode: mpesa.mpesaShortcode || '',
+          environment: mpesa.mpesaEnvironment || 'sandbox',
+          isActive: mpesa.isActive
+        });
+      }
+
+      const selcom = data.find((c: PaymentGateway) => c.provider === 'selcom');
+      if (selcom) {
+        setSelcomForm({
+          apiKey: selcom.selcomApiKey || '',
+          secretKey: selcom.selcomSecretKey || '',
+          vendorName: selcom.selcomVendorName || '',
+          environment: selcom.selcomEnvironment || 'sandbox',
+          isActive: selcom.isActive
+        });
+      }
+
+      const pesapal = data.find((c: PaymentGateway) => c.provider === 'pesapal');
+      if (pesapal) {
+        setPesapalForm({
+          merchantId: pesapal.pesapalMerchantId || '',
+          apiKey: pesapal.pesapalApiKey || '',
+          secretKey: pesapal.pesapalSecretKey || '',
+          environment: pesapal.pesapalEnvironment || 'sandbox',
+          isActive: pesapal.isActive
         });
       }
     } catch (error) {
@@ -238,6 +311,100 @@ export default function PaymentGatewayPage() {
     }
   };
 
+  const saveMpesa = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/payment-gateway/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: 'mpesa',
+          mpesaConsumerKey: mpesaForm.consumerKey,
+          mpesaConsumerSecret: mpesaForm.consumerSecret,
+          mpesaPasskey: mpesaForm.passkey,
+          mpesaShortcode: mpesaForm.shortcode,
+          mpesaEnvironment: mpesaForm.environment,
+          isActive: mpesaForm.isActive
+        })
+      });
+
+      if (res.ok) {
+        await showSuccess('M-Pesa configuration saved successfully');
+        fetchConfigs();
+      } else {
+        const data = await res.json();
+        await showError(data.error || 'Failed to save M-Pesa config');
+      }
+    } catch (error) {
+      console.error('Save M-Pesa error:', error);
+      await showError('Failed to save M-Pesa configuration');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const saveSelcom = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/payment-gateway/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: 'selcom',
+          selcomApiKey: selcomForm.apiKey,
+          selcomSecretKey: selcomForm.secretKey,
+          selcomVendorName: selcomForm.vendorName,
+          selcomEnvironment: selcomForm.environment,
+          isActive: selcomForm.isActive
+        })
+      });
+
+      if (res.ok) {
+        await showSuccess('Selcom configuration saved successfully');
+        fetchConfigs();
+      } else {
+        const data = await res.json();
+        await showError(data.error || 'Failed to save Selcom config');
+      }
+    } catch (error) {
+      console.error('Save Selcom error:', error);
+      await showError('Failed to save Selcom configuration');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const savePesapal = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/payment-gateway/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: 'pesapal',
+          pesapalMerchantId: pesapalForm.merchantId,
+          pesapalApiKey: pesapalForm.apiKey,
+          pesapalSecretKey: pesapalForm.secretKey,
+          pesapalEnvironment: pesapalForm.environment,
+          isActive: pesapalForm.isActive
+        })
+      });
+
+      if (res.ok) {
+        await showSuccess('Pesapal configuration saved successfully');
+        fetchConfigs();
+      } else {
+        const data = await res.json();
+        await showError(data.error || 'Failed to save Pesapal config');
+      }
+    } catch (error) {
+      console.error('Save Pesapal error:', error);
+      await showError('Failed to save Pesapal configuration');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const toggleSecret = (key: string) => {
     setShowSecrets(prev => ({ ...prev, [key]: !prev[key] }));
   };
@@ -281,14 +448,14 @@ export default function PaymentGatewayPage() {
   };
   
   const formatTimestamp = (timestamp: string) => {
-    return formatWIB(new Date(timestamp), 'dd MMM yyyy HH:mm:ss');
+    return formatNairobi(new Date(timestamp), 'dd MMM yyyy HH:mm:ss');
   };
   
   const formatAmount = (amount: number | null) => {
     if (!amount) return '-';
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
-      currency: 'IDR',
+      currency: 'TZS',
       minimumFractionDigits: 0
     }).format(amount);
   };
@@ -357,12 +524,12 @@ export default function PaymentGatewayPage() {
 
       {/* Gateway Tabs */}
       <Tabs defaultValue="logs" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="logs" className="flex items-center gap-2">
             <List className="h-4 w-4" />
             Webhook Logs
           </TabsTrigger>
-          <TabsTrigger value="midtrans" className="flex items-center gap-2">
+          {/* <TabsTrigger value="midtrans" className="flex items-center gap-2">
             <CreditCard className="h-4 w-4" />
             Midtrans
             {midtransActive && <CheckCircle2 className="h-3 w-3 text-green-600" />}
@@ -376,6 +543,21 @@ export default function PaymentGatewayPage() {
             <Wallet className="h-4 w-4" />
             Duitku
             {configs.find(c => c.provider === 'duitku')?.isActive && <CheckCircle2 className="h-3 w-3 text-green-600" />}
+          </TabsTrigger> */}
+          <TabsTrigger value="mpesa" className="flex items-center gap-2">
+            <Wallet className="h-4 w-4" />
+            M-Pesa
+            {configs.find(c => c.provider === 'mpesa')?.isActive && <CheckCircle2 className="h-3 w-3 text-green-600" />}
+          </TabsTrigger>
+          <TabsTrigger value="selcom" className="flex items-center gap-2">
+            <Wallet className="h-4 w-4" />
+            Selcom
+            {configs.find(c => c.provider === 'selcom')?.isActive && <CheckCircle2 className="h-3 w-3 text-green-600" />}
+          </TabsTrigger>
+          <TabsTrigger value="pesapal" className="flex items-center gap-2">
+            <Wallet className="h-4 w-4" />
+            Pesapal
+            {configs.find(c => c.provider === 'pesapal')?.isActive && <CheckCircle2 className="h-3 w-3 text-green-600" />}
           </TabsTrigger>
         </TabsList>
 
@@ -722,6 +904,421 @@ export default function PaymentGatewayPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* M-PESA CONFIGURATION */}
+        <TabsContent value="mpesa">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>M-Pesa Configuration</CardTitle>
+                  <CardDescription>
+                    Configure your M-Pesa STK Push payment gateway
+                  </CardDescription>
+                </div>
+                {configs.find(c => c.provider === 'mpesa')?.isActive && (
+                  <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                    Active
+                  </Badge>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Environment */}
+              <div className="space-y-2">
+                <Label>Environment</Label>
+                <select
+                  value={mpesaForm.environment}
+                  onChange={(e) => setMpesaForm({ ...mpesaForm, environment: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 dark:border-gray-700"
+                >
+                  <option value="sandbox">Sandbox (Testing)</option>
+                  <option value="production">Production</option>
+                </select>
+              </div>
+
+              {/* Consumer Key */}
+              <div className="space-y-2">
+                <Label>Consumer Key</Label>
+                <div className="relative">
+                  <Input
+                    type={showSecrets['mpesa-consumer'] ? 'text' : 'password'}
+                    value={mpesaForm.consumerKey}
+                    onChange={(e) => setMpesaForm({ ...mpesaForm, consumerKey: e.target.value })}
+                    placeholder="Your M-Pesa Consumer Key"
+                    className="pr-10 font-mono text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => toggleSecret('mpesa-consumer')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showSecrets['mpesa-consumer'] ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Consumer Secret */}
+              <div className="space-y-2">
+                <Label>Consumer Secret</Label>
+                <div className="relative">
+                  <Input
+                    type={showSecrets['mpesa-secret'] ? 'text' : 'password'}
+                    value={mpesaForm.consumerSecret}
+                    onChange={(e) => setMpesaForm({ ...mpesaForm, consumerSecret: e.target.value })}
+                    placeholder="Your M-Pesa Consumer Secret"
+                    className="pr-10 font-mono text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => toggleSecret('mpesa-secret')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showSecrets['mpesa-secret'] ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Passkey */}
+              <div className="space-y-2">
+                <Label>Passkey</Label>
+                <div className="relative">
+                  <Input
+                    type={showSecrets['mpesa-passkey'] ? 'text' : 'password'}
+                    value={mpesaForm.passkey}
+                    onChange={(e) => setMpesaForm({ ...mpesaForm, passkey: e.target.value })}
+                    placeholder="Your M-Pesa Passkey"
+                    className="pr-10 font-mono text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => toggleSecret('mpesa-passkey')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showSecrets['mpesa-passkey'] ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Shortcode */}
+              <div className="space-y-2">
+                <Label>Shortcode</Label>
+                <Input
+                  type="text"
+                  value={mpesaForm.shortcode}
+                  onChange={(e) => setMpesaForm({ ...mpesaForm, shortcode: e.target.value })}
+                  placeholder="174379XXXX"
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              {/* Active Toggle */}
+              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div>
+                  <Label className="text-base">Enable M-Pesa</Label>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Make M-Pesa available for customers
+                  </p>
+                </div>
+                <Switch
+                  checked={mpesaForm.isActive}
+                  onCheckedChange={(checked) => setMpesaForm({ ...mpesaForm, isActive: checked })}
+                />
+              </div>
+
+              {/* Save Button */}
+              <Button
+                onClick={saveMpesa}
+                disabled={saving || !mpesaForm.consumerKey || !mpesaForm.consumerSecret || !mpesaForm.passkey || !mpesaForm.shortcode}
+                className="w-full"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save M-Pesa Configuration
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* SELCOM CONFIGURATION */}
+        <TabsContent value="selcom">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Selcom Configuration</CardTitle>
+                  <CardDescription>
+                    Configure your Selcom payment gateway
+                  </CardDescription>
+                </div>
+                {configs.find(c => c.provider === 'selcom')?.isActive && (
+                  <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                    Active
+                  </Badge>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Environment */}
+              <div className="space-y-2">
+                <Label>Environment</Label>
+                <select
+                  value={selcomForm.environment}
+                  onChange={(e) => setSelcomForm({ ...selcomForm, environment: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 dark:border-gray-700"
+                >
+                  <option value="sandbox">Sandbox (Testing)</option>
+                  <option value="production">Production</option>
+                </select>
+              </div>
+
+              {/* API Key */}
+              <div className="space-y-2">
+                <Label>API Key</Label>
+                <div className="relative">
+                  <Input
+                    type={showSecrets['selcom-api'] ? 'text' : 'password'}
+                    value={selcomForm.apiKey}
+                    onChange={(e) => setSelcomForm({ ...selcomForm, apiKey: e.target.value })}
+                    placeholder="Your Selcom API Key"
+                    className="pr-10 font-mono text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => toggleSecret('selcom-api')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showSecrets['selcom-api'] ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Secret Key */}
+              <div className="space-y-2">
+                <Label>Secret Key</Label>
+                <div className="relative">
+                  <Input
+                    type={showSecrets['selcom-secret'] ? 'text' : 'password'}
+                    value={selcomForm.secretKey}
+                    onChange={(e) => setSelcomForm({ ...selcomForm, secretKey: e.target.value })}
+                    placeholder="Your Selcom Secret Key"
+                    className="pr-10 font-mono text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => toggleSecret('selcom-secret')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showSecrets['selcom-secret'] ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Vendor Name */}
+              <div className="space-y-2">
+                <Label>Vendor Name</Label>
+                <Input
+                  type="text"
+                  value={selcomForm.vendorName}
+                  onChange={(e) => setSelcomForm({ ...selcomForm, vendorName: e.target.value })}
+                  placeholder="Your Selcom Vendor Name"
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              {/* Active Toggle */}
+              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div>
+                  <Label className="text-base">Enable Selcom</Label>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Make Selcom available for customers
+                  </p>
+                </div>
+                <Switch
+                  checked={selcomForm.isActive}
+                  onCheckedChange={(checked) => setSelcomForm({ ...selcomForm, isActive: checked })}
+                />
+              </div>
+
+              {/* Save Button */}
+              <Button
+                onClick={saveSelcom}
+                disabled={saving || !selcomForm.apiKey || !selcomForm.secretKey || !selcomForm.vendorName}
+                className="w-full"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Selcom Configuration
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* PESAPAL CONFIGURATION */}
+        <TabsContent value="pesapal">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Pesapal Configuration</CardTitle>
+                  <CardDescription>
+                    Configure your Pesapal payment gateway
+                  </CardDescription>
+                </div>
+                {configs.find(c => c.provider === 'pesapal')?.isActive && (
+                  <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                    Active
+                  </Badge>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Environment */}
+              <div className="space-y-2">
+                <Label>Environment</Label>
+                <select
+                  value={pesapalForm.environment}
+                  onChange={(e) => setPesapalForm({ ...pesapalForm, environment: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-900 dark:border-gray-700"
+                >
+                  <option value="sandbox">Sandbox (Testing)</option>
+                  <option value="production">Production</option>
+                </select>
+              </div>
+
+              {/* Merchant ID */}
+              <div className="space-y-2">
+                <Label>Merchant ID</Label>
+                <Input
+                  type="text"
+                  value={pesapalForm.merchantId}
+                  onChange={(e) => setPesapalForm({ ...pesapalForm, merchantId: e.target.value })}
+                  placeholder="Your Pesapal Merchant ID"
+                  className="font-mono text-sm"
+                />
+              </div>
+
+              {/* API Key */}
+              <div className="space-y-2">
+                <Label>API Key</Label>
+                <div className="relative">
+                  <Input
+                    type={showSecrets['pesapal-api'] ? 'text' : 'password'}
+                    value={pesapalForm.apiKey}
+                    onChange={(e) => setPesapalForm({ ...pesapalForm, apiKey: e.target.value })}
+                    placeholder="Your Pesapal API Key"
+                    className="pr-10 font-mono text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => toggleSecret('pesapal-api')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showSecrets['pesapal-api'] ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Secret Key */}
+              <div className="space-y-2">
+                <Label>Secret Key</Label>
+                <div className="relative">
+                  <Input
+                    type={showSecrets['pesapal-secret'] ? 'text' : 'password'}
+                    value={pesapalForm.secretKey}
+                    onChange={(e) => setPesapalForm({ ...pesapalForm, secretKey: e.target.value })}
+                    placeholder="Your Pesapal Secret Key"
+                    className="pr-10 font-mono text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => toggleSecret('pesapal-secret')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showSecrets['pesapal-secret'] ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Active Toggle */}
+              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div>
+                  <Label className="text-base">Enable Pesapal</Label>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Make Pesapal available for customers
+                  </p>
+                </div>
+                <Switch
+                  checked={pesapalForm.isActive}
+                  onCheckedChange={(checked) => setPesapalForm({ ...pesapalForm, isActive: checked })}
+                />
+              </div>
+
+              {/* Save Button */}
+              <Button
+                onClick={savePesapal}
+                disabled={saving || !pesapalForm.merchantId || !pesapalForm.apiKey || !pesapalForm.secretKey}
+                className="w-full"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Pesapal Configuration
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
         
         {/* WEBHOOK LOGS */}
         <TabsContent value="logs">
@@ -761,6 +1358,10 @@ export default function PaymentGatewayPage() {
                     <option value="">All Gateways</option>
                     <option value="midtrans">Midtrans</option>
                     <option value="xendit">Xendit</option>
+                    <option value="duitku">Duitku</option>
+                    <option value="mpesa">M-Pesa</option>
+                    <option value="selcom">Selcom</option>
+                    <option value="pesapal">Pesapal</option>
                   </select>
                 </div>
                 <div>

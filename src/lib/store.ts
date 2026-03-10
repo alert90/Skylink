@@ -23,12 +23,12 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       locale: 'id',
       company: {
-        name: 'AIBILL RADIUS',
-        email: 'admin@aibill.com',
-        phone: '+62 812-3456-7890',
-        address: 'Jakarta, Indonesia',
+        name: 'Skylink',
+        email: 'dickx005@gmail.com',
+        phone: '+255 778-884-955',
+        address: 'Dar_Es_Salaam, Tanzania',
         baseUrl: '',
-        adminPhone: '+62 812-3456-7890',
+        adminPhone: '+255 778-884-955',
       },
       setLocale: (locale) => set({ locale }),
       setCompany: (company) =>
@@ -37,7 +37,7 @@ export const useAppStore = create<AppState>()(
         })),
     }),
     {
-      name: 'aibill-settings',
+      name: 'skylink-settings',
     }
   )
 );

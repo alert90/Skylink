@@ -54,7 +54,7 @@ export default function EVoucherPage() {
     e.preventDefault();
     
     if (!selectedProfile) {
-      await showWarning('Silakan pilih paket terlebih dahulu');
+      await showWarning('Please select a package first');
       return;
     }
 
@@ -78,11 +78,11 @@ export default function EVoucherPage() {
         // Redirect to payment page
         router.push(data.order.paymentLink);
       } else {
-        await showError(data.error || 'Gagal membuat pesanan');
+        await showError(data.error || 'Failed to create order');
       }
     } catch (error) {
       console.error('Purchase error:', error);
-      await showError('Gagal membuat pesanan. Silakan coba lagi.');
+      await showError('Failed to create order. Please try again.');
     } finally {
       setPurchasing(false);
     }
@@ -91,17 +91,17 @@ export default function EVoucherPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
-      currency: 'IDR',
+      currency: 'TZS',
       minimumFractionDigits: 0,
-    }).format(amount);
+    }).format(amount)
   };
 
   const formatValidity = (value: number, unit: string) => {
     const unitMap: { [key: string]: string } = {
-      MINUTES: 'Menit',
-      HOURS: 'Jam',
-      DAYS: 'Hari',
-      MONTHS: 'Bulan',
+      MINUTES: 'Minutes',
+      HOURS: 'Hours',
+      DAYS: 'Days',
+      MONTHS: 'Months',
     };
     return `${value} ${unitMap[unit] || unit}`;
   };
@@ -127,10 +127,10 @@ export default function EVoucherPage() {
             <Wifi className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Beli Voucher WiFi
+            Buy WiFi Voucher
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
-            Pilih paket WiFi sesuai kebutuhan Anda
+            Choose WiFi package according to your needs
           </p>
         </div>
       </div>
@@ -141,7 +141,7 @@ export default function EVoucherPage() {
           {/* Voucher Packages */}
           <div className="lg:col-span-2">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Paket WiFi Tersedia
+              Available WiFi Packages
             </h2>
             
             {profiles.length === 0 ? (
@@ -149,7 +149,7 @@ export default function EVoucherPage() {
                 <CardContent>
                   <Wifi className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-600 dark:text-gray-400">
-                    Belum ada paket tersedia saat ini
+                    No packages available at this time
                   </p>
                 </CardContent>
               </Card>
@@ -193,7 +193,7 @@ export default function EVoucherPage() {
                           </p>
                         </div>
                         <Button size="sm" variant={selectedProfile?.id === profile.id ? "default" : "outline"} className="text-xs">
-                          {selectedProfile?.id === profile.id ? 'Dipilih' : 'Pilih'}
+                          {selectedProfile?.id === profile.id ? 'Selected' : 'Select'}
                         </Button>
                       </div>
                     </CardContent>
@@ -209,14 +209,14 @@ export default function EVoucherPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
-                  Ringkasan Pesanan
+                  Order Summary
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {selectedProfile ? (
                   <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4">
                     <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">
-                      Paket Dipilih
+                      Selected Package
                     </p>
                     <p className="text-lg font-bold text-gray-900 dark:text-white mb-1">
                       {selectedProfile.name}
@@ -225,7 +225,7 @@ export default function EVoucherPage() {
                       {formatValidity(selectedProfile.validityValue, selectedProfile.validityUnit)} • {selectedProfile.downloadSpeed}/{selectedProfile.uploadSpeed} Mbps
                     </p>
                     <div className="pt-3 border-t flex justify-between items-baseline">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Total Bayar</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Total Payment</span>
                       <span className="text-2xl font-bold text-blue-600">
                         {formatCurrency(selectedProfile.sellingPrice)}
                       </span>
@@ -235,7 +235,7 @@ export default function EVoucherPage() {
                   <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 text-center border-2 border-dashed border-gray-300 dark:border-gray-700">
                     <Wifi className="h-10 w-10 text-gray-400 mx-auto mb-2" />
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Pilih paket terlebih dahulu
+                      Please select a package first
                     </p>
                   </div>
                 )}
@@ -244,7 +244,7 @@ export default function EVoucherPage() {
                   <div>
                     <Label htmlFor="name">
                       <User className="h-4 w-4 inline mr-1" />
-                      Nama Lengkap *
+                      Full Name *
                     </Label>
                     <Input
                       id="name"
@@ -252,14 +252,14 @@ export default function EVoucherPage() {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      placeholder="Masukkan nama Anda"
+                      placeholder="Enter your name"
                     />
                   </div>
 
                   <div>
                     <Label htmlFor="phone">
                       <Phone className="h-4 w-4 inline mr-1" />
-                      Nomor WhatsApp *
+                      WhatsApp Number *
                     </Label>
                     <Input
                       id="phone"
@@ -270,7 +270,7 @@ export default function EVoucherPage() {
                       placeholder="08123456789"
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Kode voucher akan dikirim ke nomor ini
+                      Voucher code will be sent to this number
                     </p>
                   </div>
 
@@ -283,18 +283,18 @@ export default function EVoucherPage() {
                     {purchasing ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Memproses...
+                        Processing...
                       </>
                     ) : (
                       <>
                         <ShoppingCart className="h-5 w-5 mr-2" />
-                        Beli Sekarang
+                        Buy Now
                       </>
                     )}
                   </Button>
 
                   <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-                    Dengan melanjutkan, Anda menyetujui syarat & ketentuan kami
+                    By continuing, you agree to our terms & conditions
                   </p>
                 </form>
               </CardContent>
@@ -306,7 +306,7 @@ export default function EVoucherPage() {
       {/* Footer */}
       <div className="mt-16 py-6 border-t border-gray-200 dark:border-gray-800">
         <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-          By AIBILL RADIUS
+          By Cyberwiz
         </p>
       </div>
     </div>

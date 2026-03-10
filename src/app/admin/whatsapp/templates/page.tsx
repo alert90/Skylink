@@ -262,7 +262,7 @@ export default function WhatsAppTemplatesPage() {
                     ))}
                   </div>
                   <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
-                    💡 Klik variabel untuk menambahkan ke posisi kursor
+                    💡 Click a variable to add it to the cursor position.
                   </p>
                 </div>
               </div>

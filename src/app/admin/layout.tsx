@@ -80,7 +80,7 @@ const menuItems: MenuItem[] = [
     requiredPermission: 'settings.payment',
   },
   {
-    title: 'Keuangan',
+    title: 'Finance',
     icon: <Wallet className="w-5 h-5" />,
     href: '/admin/keuangan',
     requiredPermission: 'keuangan.view',
@@ -326,7 +326,7 @@ function AdminLayoutContent({
                 <h1 className="text-base font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent truncate">
                   {company.name}
                 </h1>
-                <p className="text-[10px] text-gray-500 dark:text-gray-400 -mt-1 truncate">Billing System</p>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 -mt-1 truncate">Billing Portal</p>
               </div>
             </div>
             <button

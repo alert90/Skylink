@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import MapPicker from '@/components/MapPicker';
 import UserDetailModal from '@/components/UserDetailModal';
-import { formatWIB, isExpiredWIB as isExpired, endOfDayWIBtoUTC } from '@/lib/timezone';
+import { formatNairobi, isExpiredNairobi as isExpired, endOfDayNairobiToUTC } from '@/lib/timezone';
 
 interface PppoeUser {
   id: string;
@@ -155,7 +155,7 @@ export default function PppoeUsersPage() {
         ...(editingUser && { id: editingUser.id }),
         // If expiredAt provided, convert WIB date (YYYY-MM-DD) to end of day UTC
         ...(formData.expiredAt && {
-          expiredAt: endOfDayWIBtoUTC(new Date(formData.expiredAt + 'T23:59:59')).toISOString()
+          expiredAt: endOfDayNairobiToUTC(new Date(formData.expiredAt + 'T23:59:59')).toISOString()
         }),
       };
 
@@ -227,7 +227,7 @@ export default function PppoeUsersPage() {
       latitude: user.latitude?.toString() || '',
       longitude: user.longitude?.toString() || '',
       ipAddress: user.ipAddress || '',
-      expiredAt: user.expiredAt ? formatWIB(user.expiredAt, 'yyyy-MM-dd') : '',
+      expiredAt: user.expiredAt ? formatNairobi(user.expiredAt, 'yyyy-MM-dd') : '',
     });
     setIsDialogOpen(true);
   };
@@ -402,7 +402,7 @@ export default function PppoeUsersPage() {
           u.profile.name,
           u.router?.name || 'Global',
           u.status,
-          u.expiredAt ? formatWIB(u.expiredAt) : ''
+          u.expiredAt ? formatNairobi(u.expiredAt) : ''
         ].join(','))
       ].join('\n');
 
@@ -900,7 +900,7 @@ export default function PppoeUsersPage() {
                               : 'text-gray-900 dark:text-gray-100'
                           }
                         >
-                          {formatWIB(user.expiredAt, 'dd/MM/yyyy')}
+                          {formatNairobi(user.expiredAt, 'dd/MM/yyyy')}
                         </span>
                       ) : (
                         '-'

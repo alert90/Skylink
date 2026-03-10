@@ -1,5 +1,6 @@
 'use client';
 import { showSuccess, showError, showConfirm, showToast } from '@/lib/sweetalert';
+import { formatCurrency } from '@/lib/utils';
 
 import { useState, useEffect } from 'react';
 import {
@@ -284,7 +285,7 @@ export default function PPPoEProfilesPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 font-mono text-sm">{profile.groupName}</td>
-                    <td className="px-6 py-4">Rp {profile.price.toLocaleString('id-ID')}</td>
+                    <td className="px-6 py-4">{formatCurrency(profile.price)}</td>
                     <td className="px-6 py-4 font-mono text-sm">
                       {profile.downloadSpeed}M / {profile.uploadSpeed}M
                     </td>
@@ -373,7 +374,7 @@ export default function PPPoEProfilesPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Price (IDR) *</label>
+                  <label className="block text-sm font-medium mb-2">Price (TZS) *</label>
                   <input
                     type="number"
                     value={formData.price}

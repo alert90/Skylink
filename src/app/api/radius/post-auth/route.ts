@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { nanoid } from "nanoid";
+import { formatCurrency } from "@/lib/utils";
 
 /**
  * RADIUS Post-Auth Hook
@@ -113,11 +114,11 @@ export async function POST(request: NextRequest) {
                   description: `Voucher ${voucher.profile.name} - ${voucher.code} (Agent/Manual)`,
                   date: now,
                   reference: `VOUCHER-${voucher.code}`,
-                  notes: `Realtime sync from first login (costPrice: Rp ${voucher.profile.costPrice})`,
+                  notes: `Realtime sync from first login (costPrice: ${formatCurrency(voucher.profile.costPrice)})`,
                 },
               });
               console.log(
-                `[POST-AUTH] Keuangan synced: ${voucher.code} - Rp ${voucher.profile.costPrice}`,
+                `[POST-AUTH] Keuangan synced: ${voucher.code} - ${formatCurrency(voucher.profile.costPrice)}`,
               );
 
               // If agent voucher (has batchCode with agent name), record commission expense
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest) {
                     },
                   });
                   console.log(
-                    `[POST-AUTH] Agent commission synced: ${voucher.code} - Rp ${voucher.profile.resellerFee}`,
+                    `[POST-AUTH] Agent commission synced: ${voucher.code} - ${formatCurrency(voucher.profile.resellerFee)}`,
                   );
                 }
               }

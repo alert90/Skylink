@@ -446,9 +446,9 @@ export async function sendInvoiceReminders(): Promise<{ success: boolean; sent: 
     // Get current WIB time
     const now = new Date()
     const wibOffset = 7 * 60 // WIB is UTC+7
-    const nowWIB = new Date(now.getTime() + wibOffset * 60 * 1000)
-    const currentHour = nowWIB.getUTCHours()
-    const currentMinute = nowWIB.getUTCMinutes()
+    const nowNairobi = new Date(now.getTime() + wibOffset * 60 * 1000)
+    const currentHour = nowNairobi.getUTCHours()
+    const currentMinute = nowNairobi.getUTCMinutes()
     
     // Check if current time matches reminder time (within 1 hour window)
     if (currentHour !== targetHour) {

@@ -46,7 +46,7 @@ export async function createXenditInvoice(params: {
           mobileNumber: params.customerPhone
         },
         invoiceDuration: 86400, // 24 hours
-        currency: 'IDR',
+        currency: 'TZS',
         reminderTime: 1,
         successRedirectUrl: `${baseUrl}/payment/success?token=${params.invoiceToken}`,
         failureRedirectUrl: `${baseUrl}/payment/failed?token=${params.invoiceToken}`

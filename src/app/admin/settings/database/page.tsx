@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { showSuccess, showError, showConfirm } from '@/lib/sweetalert';
 import { usePermissions } from '@/hooks/usePermissions';
-import { formatWIB } from '@/lib/timezone';
+import { formatNairobi } from '@/lib/timezone';
 
 interface BackupHistory {
   id: string;
@@ -352,7 +352,7 @@ export default function DatabaseSettingsPage() {
             <div className="space-y-1">
               <p className="text-xs text-gray-500">Last Backup</p>
               <p className="text-lg font-semibold">
-                {dbHealth.lastBackup ? formatWIB(dbHealth.lastBackup, 'dd/MM HH:mm') : 'Never'}
+                {dbHealth.lastBackup ? formatNairobi(dbHealth.lastBackup, 'dd/MM HH:mm') : 'Never'}
               </p>
             </div>
             <div className="space-y-1">
@@ -516,7 +516,7 @@ export default function DatabaseSettingsPage() {
                     backupHistory.map((backup) => (
                       <tr key={backup.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4 text-sm">
-                          {formatWIB(backup.createdAt)}
+                          {formatNairobi(backup.createdAt)}
                         </td>
                         <td className="px-6 py-4 text-sm font-mono">
                           {backup.filename}

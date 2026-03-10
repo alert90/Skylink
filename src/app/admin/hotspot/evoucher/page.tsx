@@ -36,7 +36,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { showSuccess, showError, showConfirm } from '@/lib/sweetalert';
-import { formatToWIB } from '@/lib/utils/dateUtils';
+import { formattoNairobi } from '@/lib/utils/dateUtils';
 
 interface Order {
   id: string;
@@ -188,7 +188,7 @@ export default function EVoucherManagementPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
-      currency: 'IDR',
+      currency: 'TZS',
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -382,10 +382,10 @@ export default function EVoucherManagementPage() {
                         <TableCell>{getStatusBadge(order.status)}</TableCell>
                         <TableCell>
                           <div className="text-sm">
-                            {formatToWIB(order.createdAt)}
+                            {formattoNairobi(order.createdAt)}
                             {order.paidAt && (
                               <div className="text-xs text-green-600">
-                                Paid: {formatToWIB(order.paidAt)}
+                                Paid: {formattoNairobi(order.paidAt)}
                               </div>
                             )}
                           </div>

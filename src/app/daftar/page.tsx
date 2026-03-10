@@ -59,7 +59,7 @@ export default function DaftarPage() {
     e.preventDefault();
 
     if (!formData.name || !formData.phone || !formData.address || !formData.profileId) {
-      await showError('Mohon lengkapi semua field yang wajib diisi');
+      await showError('Please complete all required fields');
       return;
     }
 
@@ -76,14 +76,14 @@ export default function DaftarPage() {
       if (res.ok) {
         setSuccess(true);
         await showSuccess(
-          'Pendaftaran berhasil dikirim!\n\nTim kami akan menghubungi Anda segera untuk proses selanjutnya.'
+          'Registration has been successfully submitted!\n\nOur team will contact you soon for further processing.'
         );
       } else {
-        await showError(data.error || 'Gagal mengirim pendaftaran');
+        await showError(data.error || 'Failed to send registration');
       }
     } catch (error) {
       console.error('Submit error:', error);
-      await showError('Gagal mengirim pendaftaran');
+      await showError('Failed to send registration');
     } finally {
       setSubmitting(false);
     }
@@ -108,11 +108,11 @@ export default function DaftarPage() {
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Pendaftaran Berhasil!
+             Registration Successful!
             </h2>
             <p className="text-gray-600 mb-6">
-              Terima kasih telah mendaftar. Tim kami akan segera menghubungi Anda untuk
-              proses instalasi.
+             Thank you for registering. Our team will contact you 
+              shortly to complete the installation process.
             </p>
             <Button
               onClick={() => {
@@ -128,7 +128,7 @@ export default function DaftarPage() {
               }}
               className="w-full"
             >
-              Daftar Lagi
+              Register Again
             </Button>
           </CardContent>
         </Card>
@@ -147,10 +147,10 @@ export default function DaftarPage() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Daftar Internet
+           Affordable Internet
           </h1>
           <p className="text-lg text-gray-600">
-            Lengkapi formulir di bawah untuk mendaftar layanan internet
+           Complete the form below to register for unlimited internet.
           </p>
         </div>
 
@@ -158,21 +158,21 @@ export default function DaftarPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserPlus className="w-5 h-5" />
-              Formulir Pendaftaran
+              Registration form
             </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Info */}
               <div className="space-y-4">
-                <h3 className="font-semibold text-gray-900">Informasi Pribadi</h3>
+                <h3 className="font-semibold text-gray-900">Personal Information</h3>
 
                 <div>
                   <Label>
-                    Nama Lengkap <span className="text-red-500">*</span>
+                   Full name <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    placeholder="Nama lengkap Anda"
+                    placeholder="Your full name"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
@@ -183,11 +183,11 @@ export default function DaftarPage() {
 
                 <div>
                   <Label>
-                    Nomor WhatsApp <span className="text-red-500">*</span>
+                   WhatsApp Number <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     type="tel"
-                    placeholder="08xxxxxxxxxx"
+                    placeholder="0778XXXXXX"
                     value={formData.phone}
                     onChange={(e) =>
                       setFormData({ ...formData, phone: e.target.value })
@@ -195,29 +195,29 @@ export default function DaftarPage() {
                     required
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Nomor ini akan digunakan untuk komunikasi
+                   This number will be used for communication
                   </p>
                 </div>
 
-                <div>
+                {/* <div>
                   <Label>Email</Label>
                   <Input
                     type="email"
-                    placeholder="email@example.com (opsional)"
+                    placeholder="email@example.com (optional)"
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
                   />
-                </div>
+                </div> */}
 
                 <div>
                   <Label>
-                    Alamat Lengkap <span className="text-red-500">*</span>
+                  Complete address <span className="text-red-500">*</span>
                   </Label>
                   <textarea
                     className="w-full min-h-24 px-3 py-2 border border-gray-300 rounded-md"
-                    placeholder="Jalan, RT/RW, Kelurahan, Kecamatan, Kota/Kabupaten"
+                    placeholder="Mbezi Beach, Dar Es Salaam"
                     value={formData.address}
                     onChange={(e) =>
                       setFormData({ ...formData, address: e.target.value })
@@ -229,11 +229,11 @@ export default function DaftarPage() {
 
               {/* Package Selection */}
               <div className="space-y-4">
-                <h3 className="font-semibold text-gray-900">Pilih Paket</h3>
+                <h3 className="font-semibold text-gray-900">Select Package</h3>
 
                 <div>
                   <Label>
-                    Paket Internet <span className="text-red-500">*</span>
+                   Internet Packages <span className="text-red-500">*</span>
                   </Label>
                   <Select
                     value={formData.profileId}
@@ -242,14 +242,14 @@ export default function DaftarPage() {
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih paket internet" />
+                      <SelectValue placeholder="Select an internet package" />
                     </SelectTrigger>
                     <SelectContent>
                       {profiles.map((profile) => (
                         <SelectItem key={profile.id} value={profile.id}>
                           {profile.name} - {profile.downloadSpeed}/
-                          {profile.uploadSpeed} Mbps - Rp{' '}
-                          {profile.price.toLocaleString()}/bulan
+                          {profile.uploadSpeed} Mbps - Tsh{' '}
+                          {profile.price.toLocaleString()}/month
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -259,26 +259,26 @@ export default function DaftarPage() {
                 {selectedProfile && (
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                     <h4 className="font-semibold text-blue-900 mb-2">
-                      Detail Paket Terpilih
+                    Selected Package Details
                     </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Nama Paket:</span>
+                        <span className="text-gray-600">Package Name:</span>
                         <span className="font-medium text-gray-900">
                           {selectedProfile.name}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Kecepatan:</span>
+                        <span className="text-gray-600">Speed:</span>
                         <span className="font-medium text-gray-900">
                           {selectedProfile.downloadSpeed}/{selectedProfile.uploadSpeed}{' '}
                           Mbps
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Harga Bulanan:</span>
+                        <span className="text-gray-600">Monthly Price:</span>
                         <span className="font-bold text-blue-600">
-                          Rp {selectedProfile.price.toLocaleString()}
+                          Tsh {selectedProfile.price.toLocaleString()}
                         </span>
                       </div>
                       {selectedProfile.description && (
@@ -292,17 +292,17 @@ export default function DaftarPage() {
               </div>
 
               {/* Additional Notes */}
-              <div>
-                <Label>Catatan Tambahan</Label>
+              {/* <div>
+                <Label>Additional Notes</Label>
                 <textarea
                   className="w-full min-h-20 px-3 py-2 border border-gray-300 rounded-md"
-                  placeholder="Catatan atau permintaan khusus (opsional)"
+                  placeholder="Special notes or requests (optional)"
                   value={formData.notes}
                   onChange={(e) =>
                     setFormData({ ...formData, notes: e.target.value })
                   }
                 />
-              </div>
+              </div> */}
 
               {/* Submit */}
               <div className="pt-4">
@@ -314,19 +314,19 @@ export default function DaftarPage() {
                   {submitting ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Mengirim...
+                      Send...
                     </>
                   ) : (
                     <>
                       <UserPlus className="w-5 h-5 mr-2" />
-                      Kirim Pendaftaran
+                      Submit
                     </>
                   )}
                 </Button>
               </div>
 
               <p className="text-xs text-center text-gray-500">
-                Dengan mendaftar, Anda menyetujui syarat dan ketentuan layanan kami
+               By registering, you agree to our terms and conditions of service.
               </p>
             </form>
           </CardContent>
@@ -335,7 +335,7 @@ export default function DaftarPage() {
         {/* Info */}
         <div className="mt-8 text-center text-sm text-gray-600">
           <p>
-            Butuh bantuan? Hubungi kami di WhatsApp atau email support kami
+           Need help? Contact us on WhatsApp or email our support team.
           </p>
         </div>
       </div>

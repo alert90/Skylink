@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { disconnectExpiredSessions, disconnectPPPoEUser } from '@/lib/services/coaService'
 import { nanoid } from 'nanoid'
 import { startBackupCron, startHealthCron } from './telegram-cron'
-import { nowWIB, startOfDayWIBtoUTC, endOfDayWIBtoUTC, formatWIB } from '@/lib/timezone'
+import { nowNairobi, startOfDayNairobiToUTC, endOfDayNairobiToUTC, formatNairobi } from '@/lib/timezone'
+import { formatCurrency } from '@/lib/utils'
 
 let isRunning = false
 let isAutoIsolirRunning = false
@@ -120,7 +121,7 @@ export async function syncVoucherFromRadius(): Promise<{ success: boolean; synce
                   description: `Voucher ${updatedVoucher.profile.name} - ${updatedVoucher.code} (Agent/Manual)`,
                   date: firstLoginAt,
                   reference: `VOUCHER-${updatedVoucher.code}`,
-                  notes: `Auto-synced from voucher activation (costPrice: Rp ${updatedVoucher.profile.costPrice})`,
+                  notes: `Auto-synced from voucher activation (costPrice: ${formatCurrency(updatedVoucher.profile.costPrice)})`,
                 },
               })
               console.log(`[CRON] Keuangan synced for voucher ${voucher.code}`)
@@ -150,7 +151,7 @@ export async function syncVoucherFromRadius(): Promise<{ success: boolean; synce
                         notes: `Agent commission for voucher ${updatedVoucher.profile.name}`,
                       },
                     })
-                    console.log(`[CRON] Agent commission synced for voucher ${voucher.code} - Rp ${updatedVoucher.profile.resellerFee}`)
+                    console.log(`[CRON] Agent commission synced for voucher ${voucher.code} - ${formatCurrency(updatedVoucher.profile.resellerFee)}`)
                   }
                 }
               }
@@ -445,7 +446,7 @@ export async function sendInvoiceReminders(): Promise<{ success: boolean; sent: 
     const [targetHour, targetMinute] = settings.reminderTime.split(':').map(Number)
     
     // Get current WIB time (database stores UTC, setting is in WIB)
-    const now = nowWIB()
+    const now = nowNairobi()
     const currentHour = now.getHours()
     const currentMinute = now.getMinutes()
     
@@ -473,16 +474,16 @@ export async function sendInvoiceReminders(): Promise<{ success: boolean; sent: 
     for (const reminderDay of reminderDays) {
       // reminderDay is negative or 0: -5 means 5 days before due, 0 means due date
       // Calculate target due date in WIB: if reminderDay is -5, we want invoices due in 5 days from now
-      const nowInWIB = nowWIB()
+      const nowInWIB = nowNairobi()
       const targetDateWIB = new Date(nowInWIB)
       targetDateWIB.setDate(targetDateWIB.getDate() - reminderDay) // Minus negative = add
       targetDateWIB.setHours(0, 0, 0, 0)
       
       // Convert WIB date boundaries to UTC for database query
-      const targetDateUTC = startOfDayWIBtoUTC(targetDateWIB)
-      const nextDayUTC = endOfDayWIBtoUTC(targetDateWIB)
+      const targetDateUTC = startOfDayNairobiToUTC(targetDateWIB)
+      const nextDayUTC = endOfDayNairobiToUTC(targetDateWIB)
       
-      console.log(`[Invoice Reminder] Checking H${reminderDay}: Looking for invoices due on ${formatWIB(targetDateWIB, 'yyyy-MM-dd')} WIB`)
+      console.log(`[Invoice Reminder] Checking H${reminderDay}: Looking for invoices due on ${formatNairobi(targetDateWIB, 'yyyy-MM-dd')} WIB`)
       
       // Find pending invoices with dueDate matching target (database stores UTC)
       const invoices = await prisma.invoice.findMany({
@@ -658,11 +659,11 @@ export async function autoIsolateExpiredUsers(): Promise<{ success: boolean; iso
     // IMPORTANT: Use timezone-aware comparison for isolir
     // User sees expiry in WIB, so we isolate at END of that WIB day
     // Example: expired 5 Nov (WIB) → isolate at 6 Nov 00:00 (WIB) = 5 Nov 17:00 (UTC)
-    const nowInWIB = nowWIB()
-    const startOfTodayWIB = startOfDayWIBtoUTC(nowInWIB)
+    const nowInWIB = nowNairobi()
+    const startOfTodayWIB = startOfDayNairobiToUTC(nowInWIB)
     
     console.log(`[Auto Isolir] Checking for expired users...`)
-    console.log(`[Auto Isolir] Now (WIB): ${formatWIB(nowInWIB)}`)
+    console.log(`[Auto Isolir] Now (WIB): ${formatNairobi(nowInWIB)}`)
     console.log(`[Auto Isolir] Start of today (WIB -> UTC): ${startOfTodayWIB.toISOString()}`)
 
     // Find active users with expiredAt before start of today (in UTC)

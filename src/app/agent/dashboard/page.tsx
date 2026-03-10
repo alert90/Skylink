@@ -1,6 +1,6 @@
 'use client';
 import { showSuccess, showError, showConfirm, showToast } from '@/lib/sweetalert';
-import { formatWIB } from '@/lib/timezone';
+import { formatNairobi } from '@/lib/timezone';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -225,7 +225,7 @@ export default function AgentDashboardPage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
-      currency: 'IDR',
+      currency: 'TZS',
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -493,18 +493,18 @@ export default function AgentDashboardPage() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
                         {voucher.firstLoginAt 
-                          ? formatWIB(new Date(voucher.firstLoginAt), 'dd/MM/yyyy HH:mm')
+                          ? formatNairobi(new Date(voucher.firstLoginAt), 'dd/MM/yyyy HH:mm')
                           : '-'
                         }
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
                         {voucher.expiresAt 
-                          ? formatWIB(new Date(voucher.expiresAt), 'dd/MM/yyyy HH:mm')
+                          ? formatNairobi(new Date(voucher.expiresAt), 'dd/MM/yyyy HH:mm')
                           : '-'
                         }
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
-                        {formatWIB(new Date(voucher.createdAt), 'dd MMM yyyy HH:mm')}
+                        {formatNairobi(new Date(voucher.createdAt), 'dd MMM yyyy HH:mm')}
                       </td>
                     </tr>
                   ))

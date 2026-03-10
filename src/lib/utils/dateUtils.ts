@@ -6,14 +6,14 @@
  * This file is kept for backward compatibility
  */
 
-import { toWIB, formatWIB, daysUntilExpiry, relativeWIB, nowWIB } from '@/lib/timezone'
+import { toNairobi, formatNairobi, daysUntilExpiry, relativeNairobi, nowNairobi } from '@/lib/timezone'
 
 /**
  * Format datetime string (UTC from DB) to WIB display
  * Format: dd/MM/yyyy HH:mm:ss
  */
-export function formatToWIB(dateStr: string | Date): string {
-  return formatWIB(dateStr, 'dd/MM/yyyy HH:mm:ss')
+export function formattoNairobi(dateStr: string | Date): string {
+  return formatNairobi(dateStr, 'dd/MM/yyyy HH:mm:ss')
 }
 
 /**
@@ -21,7 +21,7 @@ export function formatToWIB(dateStr: string | Date): string {
  * Format: dd/MM/yyyy
  */
 export function formatDateOnly(dateStr: string | Date): string {
-  return formatWIB(dateStr, 'dd/MM/yyyy')
+  return formatNairobi(dateStr, 'dd/MM/yyyy')
 }
 
 /**
@@ -29,7 +29,7 @@ export function formatDateOnly(dateStr: string | Date): string {
  * Format: HH:mm:ss
  */
 export function formatTimeOnly(dateStr: string | Date): string {
-  return formatWIB(dateStr, 'HH:mm:ss')
+  return formatNairobi(dateStr, 'HH:mm:ss')
 }
 
 /**
@@ -40,10 +40,10 @@ export function calculateTimeLeft(expiresAtStr: string | Date): string {
   if (!expiresAtStr) return '-'
   
   try {
-    const expiresWIB = toWIB(expiresAtStr)
+    const expiresWIB = toNairobi(expiresAtStr)
     if (!expiresWIB) return '-'
     
-    const now = nowWIB()
+    const now = nowNairobi()
     const diff = Math.max(0, Math.floor((expiresWIB.getTime() - now.getTime()) / 1000))
     
     if (diff === 0) return 'Expired'
@@ -64,13 +64,13 @@ export function calculateTimeLeft(expiresAtStr: string | Date): string {
  * Get current time in WIB
  */
 export function nowInWIB(): Date {
-  return nowWIB()
+  return nowNairobi()
 }
 
 /**
  * Format relative time (e.g., "2 hours ago")
- * Uses date-fns relativeWIB which supports Indonesian locale
+ * Uses date-fns relativeNairobi which supports Indonesian locale
  */
 export function formatRelativeTime(dateStr: string | Date): string {
-  return relativeWIB(dateStr)
+  return relativeNairobi(dateStr)
 }

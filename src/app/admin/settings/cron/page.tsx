@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { RefreshCw, Play, Clock } from "lucide-react"
-import { formatToWIB } from "@/lib/utils/dateUtils"
+import { formattoNairobi } from "@/lib/utils/dateUtils"
 
 interface CronHistory {
   id: string
@@ -171,13 +171,13 @@ export default function CronSettingsPage() {
                   <div>
                     <span className="text-gray-500">Last Run:</span>
                     <div className="font-medium">
-                      {job.lastRun ? formatToWIB(job.lastRun.startedAt) : 'Never'}
+                      {job.lastRun ? formattoNairobi(job.lastRun.startedAt) : 'Never'}
                     </div>
                   </div>
                   <div>
                     <span className="text-gray-500">Next Run:</span>
                     <div className="font-medium text-blue-600">
-                      {formatToWIB(job.nextRun)}
+                      {formattoNairobi(job.nextRun)}
                     </div>
                   </div>
                   {job.lastRun?.duration && (
@@ -273,10 +273,10 @@ export default function CronSettingsPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm">
-                          {formatToWIB(item.startedAt)}
+                          {formattoNairobi(item.startedAt)}
                         </TableCell>
                         <TableCell className="text-sm">
-                          {item.completedAt ? formatToWIB(item.completedAt) : '-'}
+                          {item.completedAt ? formattoNairobi(item.completedAt) : '-'}
                         </TableCell>
                         <TableCell className="text-sm">
                           {duration ? `${duration}s` : '-'}

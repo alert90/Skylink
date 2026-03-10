@@ -5,7 +5,7 @@ const baseURL = process.env.MPESA_ENVIRONMENT === 'sandbox'
   ? 'https://sandbox.safaricom.co.ke'
   : 'https://api.safaricom.co.ke';
 
-export async function stkPush(phone: string, amount: number, accountRef = 'AIBILL') {
+export async function stkPush(phone: string, amount: number, accountRef = 'SKYLINK') {
   const token = await getAccessToken();
   const payload = {
     BusinessShortCode: process.env.MPESA_SHORTCODE,

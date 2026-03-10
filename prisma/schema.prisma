@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model agentSale {
@@ -90,7 +91,7 @@ model hotspotVoucher {
 
   @@index([batchCode])
   @@index([orderId])
-  @@index([profileId], map: "hotspot_vouchers_profileId_fkey")
+  @@index([profileId])
   @@index([status])
   @@map("hotspot_vouchers")
 }
@@ -110,12 +111,12 @@ model invoice {
   customerName     String?
   customerPhone    String?
   customerUsername String?
-  sentReminders    String?         @db.Text // JSON array of sent reminder days, e.g., "[-7, -5, -3]"
-  user             pppoeUser?           @relation(fields: [userId], references: [id])
+  sentReminders    String?         @db.Text
+  user             pppoeUser?      @relation(fields: [userId], references: [id])
   payments         payment[]
   registration     registrationRequest?
 
-  @@index([userId], map: "invoices_userId_fkey")
+  @@index([userId])
   @@index([status])
   @@index([dueDate])
   @@map("invoices")
@@ -144,7 +145,7 @@ model router {
   vpnClient      vpnClient?         @relation(fields: [vpnClientId], references: [id])
   users          pppoeUser[]
   networkServers networkServer[]
-  olts           networkOLTRouter[] // Many-to-many with OLTs
+  olts           networkOLTRouter[]
 
   @@index([nasname])
   @@index([shortname])
@@ -165,8 +166,24 @@ model paymentGateway {
   xenditEnvironment   String       @default("sandbox")
   xenditWebhookToken  String?
   duitkuMerchantCode  String?
-  duitkuApiKey        String?  // API Key untuk signature
+  duitkuApiKey        String?
   duitkuEnvironment   String       @default("sandbox")
+  // M-Pesa fields
+  mpesaConsumerKey    String?
+  mpesaConsumerSecret String?
+  mpesaPasskey        String?
+  mpesaShortcode      String?
+  mpesaEnvironment    String       @default("sandbox")
+  // Selcom fields
+  selcomApiKey        String?
+  selcomSecretKey     String?
+  selcomVendorName    String?
+  selcomEnvironment   String       @default("sandbox")
+  // Pesapal fields
+  pesapalMerchantId   String?
+  pesapalApiKey       String?
+  pesapalSecretKey    String?
+  pesapalEnvironment  String       @default("sandbox")
   payments            payment[]
   logs                webhookLog[]
 
@@ -174,19 +191,19 @@ model paymentGateway {
 }
 
 model payment {
-  id      String          @id
-  invoiceId String
-  amount  Int
-  method  String
-  gatewayId String?
-  status  String
-  paidAt  DateTime        @default(now())
-  createdAt DateTime      @default(now())
-  gateway paymentGateway? @relation(fields: [gatewayId], references: [id])
-  invoice invoice         @relation(fields: [invoiceId], references: [id])
+  id         String          @id
+  invoiceId  String
+  amount     Int
+  method     String
+  gatewayId  String?
+  status     String
+  paidAt     DateTime        @default(now())
+  createdAt  DateTime        @default(now())
+  gateway    paymentGateway? @relation(fields: [gatewayId], references: [id])
+  invoice    invoice         @relation(fields: [invoiceId], references: [id])
 
-  @@index([gatewayId], map: "payments_gatewayId_fkey")
-  @@index([invoiceId], map: "payments_invoiceId_fkey")
+  @@index([gatewayId])
+  @@index([invoiceId])
   @@map("payments")
 }
 
@@ -265,8 +282,8 @@ model pppoeUser {
   registration   registrationRequest?
   odpAssignment  odpCustomerAssignment?
 
-  @@index([profileId], map: "pppoe_users_profileId_fkey")
-  @@index([routerId], map: "pppoe_users_routerId_fkey")
+  @@index([profileId])
+  @@index([routerId])
   @@index([status])
   @@index([username])
   @@map("pppoe_users")
@@ -286,7 +303,7 @@ model radacct {
   acctupdatetime      DateTime?
   acctstoptime        DateTime?
   acctinterval        Int?
-  acctsessiontime     Int?      @db.UnsignedInt
+  acctsessiontime     Int?
   acctauthentic       String?   @db.VarChar(32)
   connectinfo_start   String?   @db.VarChar(50)
   connectinfo_stop    String?   @db.VarChar(50)
@@ -325,7 +342,7 @@ model radcheck {
 }
 
 model radgroupcheck {
-  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  id        Int    @id @default(autoincrement())
   groupname String @db.VarChar(64)
   attribute String @db.VarChar(64)
   op        String @default("==") @db.Char(2)
@@ -356,7 +373,7 @@ model radpostauth {
 }
 
 model radreply {
-  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  id        Int    @id @default(autoincrement())
   username  String @db.VarChar(64)
   attribute String @db.VarChar(64)
   op        String @default("=") @db.Char(2)
@@ -389,7 +406,8 @@ model sessions {
   createdAt     DateTime    @default(now())
   user          pppoeUser?  @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "sessions_userId_fkey")
+  @@index([userId])
+  @@map("sessions")
 }
 
 model users {
@@ -421,7 +439,7 @@ model voucherOrder {
   profile   hotspotProfile        @relation(fields: [profileId], references: [id])
 
   @@index([orderNumber])
-  @@index([profileId], map: "voucher_orders_profileId_fkey")
+  @@index([profileId])
   @@index([status])
   @@map("voucher_orders")
 }
@@ -488,7 +506,7 @@ model webhookLog {
   paymentGateway paymentGateway? @relation(fields: [gatewayId], references: [id])
 
   @@index([createdAt])
-  @@index([gatewayId], map: "webhook_logs_gatewayId_fkey")
+  @@index([gatewayId])
   @@index([gateway])
   @@index([orderId])
   @@map("webhook_logs")
@@ -532,17 +550,17 @@ model whatsapp_templates {
 model whatsapp_reminder_settings {
   id           String   @id
   enabled      Boolean  @default(true)
-  reminderDays String   @db.Text // JSON array: "[-7, -5, -3, 0]" where 0 = H-day, -3 = H-3, etc
-  reminderTime String   @default("09:00") // Time in HH:mm format (WIB)
-  otpEnabled   Boolean  @default(true) // Enable/disable customer OTP login
-  otpExpiry    Int      @default(5) // OTP expiry in minutes
+  reminderDays String   @db.Text
+  reminderTime String   @default("09:00")
+  otpEnabled   Boolean  @default(true)
+  otpExpiry    Int      @default(5)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
 model customerSession {
   id        String   @id @default(cuid())
-  userId    String   // pppoeUser.id
+  userId    String
   phone     String
   otpCode   String?
   otpExpiry DateTime?
@@ -561,7 +579,7 @@ model customerSession {
 model transactionCategory {
   id           String        @id
   name         String        @unique
-  type         category_type // INCOME or EXPENSE
+  type         category_type
   description  String?       @db.Text
   isActive     Boolean       @default(true)
   createdAt    DateTime      @default(now())
@@ -575,13 +593,13 @@ model transactionCategory {
 model transaction {
   id          String                @id
   categoryId  String
-  type        transaction_type      // INCOME or EXPENSE
+  type        transaction_type
   amount      Int
   description String                @db.Text
   date        DateTime              @default(now())
-  reference   String?               // Invoice number, payment ID, etc
+  reference   String?
   notes       String?               @db.Text
-  createdBy   String?               // Admin user ID
+  createdBy   String?
   createdAt   DateTime              @default(now())
   updatedAt   DateTime              @updatedAt
   category    transactionCategory   @relation(fields: [categoryId], references: [id])
@@ -594,11 +612,11 @@ model transaction {
 
 model cronHistory {
   id          String    @id
-  jobType     String    // voucher_sync, agent_sales, invoice_generate, invoice_reminder, notification_check
-  status      String    // running, success, error
+  jobType     String
+  status      String
   startedAt   DateTime  @default(now())
   completedAt DateTime?
-  duration    Int?      // milliseconds
+  duration    Int?
   result      String?   @db.Text
   error       String?   @db.Text
 
@@ -658,7 +676,6 @@ enum transaction_type {
   EXPENSE
 }
 
-// Network Map Models
 model networkServer {
   id        String   @id
   name      String
@@ -687,17 +704,16 @@ model networkOLT {
   updatedAt  DateTime            @updatedAt
   odcs       networkODC[]
   odps       networkODP[]
-  routers    networkOLTRouter[]  // Many-to-many with routers
+  routers    networkOLTRouter[]
 
   @@map("network_olts")
 }
 
-// Pivot table for OLT multi-uplink support
 model networkOLTRouter {
   id        String     @id @default(cuid())
   oltId     String
   routerId  String
-  priority  Int        @default(0) // 0=primary, 1=secondary, etc
+  priority  Int        @default(0)
   isActive  Boolean    @default(true)
   createdAt DateTime   @default(now())
   olt       networkOLT @relation(fields: [oltId], references: [id], onDelete: Cascade)
@@ -744,7 +760,7 @@ model networkODP {
   updatedAt   DateTime     @updatedAt
   odc         networkODC?  @relation(fields: [odcId], references: [id], onDelete: Cascade)
   olt         networkOLT   @relation(fields: [oltId], references: [id], onDelete: Cascade)
-  parentOdp   networkODP?  @relation("ODPHierarchy", fields: [parentOdpId], references: [id])
+  parentOdp   networkODP?  @relation("ODPHierarchy", fields: [parentOdpId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   childOdps   networkODP[] @relation("ODPHierarchy")
   customers   odpCustomerAssignment[]
 
@@ -759,7 +775,7 @@ model odpCustomerAssignment {
   customerId String      @unique
   odpId      String
   portNumber Int
-  distance   Float?      // Distance in km from customer to ODP
+  distance   Float?
   notes      String?     @db.Text
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
@@ -788,9 +804,9 @@ model mapSettings {
 
 model genieacsSettings {
   id        String   @id
-  host      String   // e.g. http://localhost:7557
+  host      String
   username  String
-  password  String   // Will be encrypted
+  password  String
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -800,10 +816,10 @@ model genieacsSettings {
 
 model notification {
   id        String   @id @default(cuid())
-  type      String   // 'invoice_overdue', 'new_registration', 'payment_received', 'user_expired', 'system_alert'
+  type      String
   title     String
   message   String   @db.Text
-  link      String?  // Optional link to related resource
+  link      String?
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
   
@@ -816,7 +832,7 @@ model adminUser {
   id              String           @id @default(cuid())
   username        String           @unique
   email           String?          @unique
-  password        String           // bcrypt hashed
+  password        String
   name            String
   role            AdminRole        @default(CUSTOMER_SERVICE)
   isActive        Boolean          @default(true)
@@ -832,13 +848,12 @@ model adminUser {
   @@map("admin_users")
 }
 
-// Permission master list
 model permission {
   id              String           @id @default(cuid())
-  key             String           @unique // e.g., "invoices.view", "users.create"
-  name            String           // Display name
+  key             String           @unique
+  name            String
   description     String?          @db.Text
-  category        String           // Group: INVOICES, USERS, NETWORK, etc.
+  category        String
   isActive        Boolean          @default(true)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -850,7 +865,6 @@ model permission {
   @@map("permissions")
 }
 
-// Default permissions per role (templates)
 model rolePermission {
   id           String     @id @default(cuid())
   role         AdminRole
@@ -864,7 +878,6 @@ model rolePermission {
   @@map("role_permissions")
 }
 
-// Custom permissions per user (overrides role template)
 model userPermission {
   id           String     @id @default(cuid())
   userId       String
@@ -891,11 +904,11 @@ enum AdminRole {
 model backupHistory {
   id          String   @id @default(cuid())
   filename    String
-  filepath    String?  // Local path
-  filesize    BigInt   // bytes
-  type        String   // 'auto' | 'manual'
-  status      String   // 'success' | 'failed'
-  method      String   @default("local") // 'local' | 'telegram' | 'both'
+  filepath    String?
+  filesize    BigInt
+  type        String
+  status      String
+  method      String   @default("local")
   error       String?  @db.Text
   createdAt   DateTime @default(now())
   
@@ -912,8 +925,8 @@ model telegramBackupSettings {
   chatId          String
   backupTopicId   String
   healthTopicId   String?
-  schedule        String   @default("daily") // 'daily', '12h', '6h', 'weekly'
-  scheduleTime    String   @default("02:00") // HH:mm
+  schedule        String   @default("daily")
+  scheduleTime    String   @default("02:00")
   keepLastN       Int      @default(7)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

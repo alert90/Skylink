@@ -2,17 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield, Smartphone, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { Shield, Smartphone, Lock, ArrowRight, Loader2, Ticket, User } from 'lucide-react';
 
 export default function CustomerLoginPage() {
   const router = useRouter();
-  const [step, setStep] = useState<'phone' | 'otp'>('phone');
+  const [loginType, setLoginType] = useState<'phone' | 'voucher'>('phone');
+  const [step, setStep] = useState<'phone' | 'voucher' | 'otp'>('phone');
   const [phone, setPhone] = useState('');
+  const [voucherCode, setVoucherCode] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [expiresIn, setExpiresIn] = useState(5);
-  const [companyName, setCompanyName] = useState('AIBILL RADIUS');
+  const [companyName, setCompanyName] = useState('Skylink');
 
   useEffect(() => {
     fetch('/api/public/company')
@@ -101,10 +106,58 @@ export default function CustomerLoginPage() {
     }
   };
 
-  const handleBack = () => {
-    setStep('phone');
-    setOtp('');
+  const handleVoucherLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
     setError('');
+
+    try {
+      const res = await fetch('/api/customer/auth/voucher-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          voucherCode: voucherCode,
+          customerName: customerName,
+          customerPhone: customerPhone
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        localStorage.setItem('customer_token', data.token);
+        localStorage.setItem('customer_user', JSON.stringify(data.user));
+        router.push('/customer');
+      } else {
+        setError(data.error || 'Invalid voucher code');
+      }
+    } catch {
+      setError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    if (loginType === 'phone') {
+      setStep('phone');
+      setOtp('');
+    } else {
+      setLoginType('phone');
+      setStep('phone');
+    }
+    setError('');
+  };
+
+  const handleLoginTypeChange = (type: 'phone' | 'voucher') => {
+    setLoginType(type);
+    setStep(type);
+    setError('');
+    setPhone('');
+    setVoucherCode('');
+    setCustomerName('');
+    setCustomerPhone('');
+    setOtp('');
   };
 
   return (
@@ -129,7 +182,40 @@ export default function CustomerLoginPage() {
             </div>
           )}
 
-          {step === 'phone' ? (
+          {/* Login Type Selector */}
+          {(step === 'phone' || step === 'voucher') && (
+            <div className="mb-6">
+              <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => handleLoginTypeChange('phone')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    loginType === 'phone'
+                      ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                  }`}
+                >
+                  <Smartphone className="w-4 h-4 inline mr-2" />
+                  Phone
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLoginTypeChange('voucher')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    loginType === 'voucher'
+                      ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                  }`}
+                >
+                  <Ticket className="w-4 h-4 inline mr-2" />
+                  Voucher
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Phone Login Form */}
+          {loginType === 'phone' && step === 'phone' && (
             <form onSubmit={handleSendOTP} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -142,12 +228,12 @@ export default function CustomerLoginPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  placeholder="08123456789"
+                  placeholder="0743XXXXXX"
                   disabled={loading}
                 />
-                <p className="text-xs text-gray-500 mt-2">
+                {/* <p className="text-xs text-gray-500 mt-2">
                   Enter the phone number registered in the system
-                </p>
+                </p> */}
               </div>
 
               <button
@@ -168,7 +254,88 @@ export default function CustomerLoginPage() {
                 )}
               </button>
             </form>
-          ) : (
+          )}
+
+          {/* Voucher Login Form */}
+          {loginType === 'voucher' && step === 'voucher' && (
+            <form onSubmit={handleVoucherLogin} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <Ticket className="w-4 h-4 inline mr-2" />
+                  Voucher Code
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={voucherCode}
+                  onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center text-xl font-mono tracking-widest focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  placeholder="ABC123"
+                  disabled={loading}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  Enter your voucher code (case-insensitive)
+                </p>
+              </div>
+
+              {/* <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <User className="w-4 h-4 inline mr-2" />
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  placeholder="John Doe"
+                  disabled={loading}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  Optional: Your name for identification
+                </p>
+              </div> */}
+
+              {/* <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <Smartphone className="w-4 h-4 inline mr-2" />
+                  Phone Number (Optional)
+                </label>
+                <input
+                  type="tel"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  placeholder="0778XXXXXX"
+                  disabled={loading}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  Optional: For support contact
+                </p>
+              </div> */}
+
+              <button
+                type="submit"
+                disabled={loading || !voucherCode}
+                className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Redeem Voucher
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+
+          {/* OTP Verification Form */}
+          {step === 'otp' && (
             <form onSubmit={handleVerifyOTP} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -232,10 +399,24 @@ export default function CustomerLoginPage() {
               </button>
             </form>
           )}
+
+          {/* Registration Link */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Don't have an account?
+              <br />
+              <Link 
+                href="/daftar" 
+                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium transition-colors"
+              >
+                Register here
+              </Link>
+            </p>
+          </div>
         </div>
 
         <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-          Powered by MWAKIDENIS-BILLING RADIUS
+          Powered by Skylink
         </p>
       </div>
     </div>

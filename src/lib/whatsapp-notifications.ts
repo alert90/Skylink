@@ -1,5 +1,6 @@
 import { WhatsAppService } from './whatsapp';
 import { prisma } from './prisma';
+import { formatCurrency } from './utils';
 
 /**
  * Render template with variables
@@ -66,7 +67,7 @@ export async function sendRegistrationApproval(data: {
       username: data.username,
       password: data.password,
       profileName: data.profileName,
-      installationFee: `Rp ${data.installationFee.toLocaleString('id-ID')}`,
+      installationFee: formatCurrency(data.installationFee),
       companyName,
       companyPhone,
     };
@@ -122,7 +123,7 @@ export async function sendInstallationInvoice(data: {
     const variables = {
       customerName: data.customerName,
       invoiceNumber: data.invoiceNumber,
-      amount: `Rp ${data.amount.toLocaleString('id-ID')}`,
+      amount: formatCurrency(data.amount),
       dueDate: dueDateStr,
       paymentLink: data.paymentLink,
       companyName,
@@ -234,7 +235,7 @@ export async function sendInvoiceReminder(data: {
       customerName: data.customerName,
       username: data.customerUsername || '-',
       invoiceNumber: data.invoiceNumber,
-      amount: `Rp ${data.amount.toLocaleString('id-ID')}`,
+      amount: formatCurrency(data.amount),
       dueDate: dueDateStr,
       daysRemaining: daysRemaining.toString(),
       paymentLink: data.paymentLink,
@@ -290,7 +291,7 @@ export async function sendPaymentSuccess(data: {
       password: data.password,
       profileName: data.profileName,
       invoiceNumber: data.invoiceNumber,
-      amount: `Rp ${data.amount.toLocaleString('id-ID')}`,
+      amount: formatCurrency(data.amount),
       companyName,
       companyPhone,
     };

@@ -124,8 +124,8 @@ export async function sendTelegramFile(
 export async function testTelegramConnection(
   options: TelegramSendOptions
 ): Promise<{ success: boolean; error?: string }> {
-  const now = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-  const testMessage = `🤖 <b>AIBILL RADIUS - Test Connection</b>\n\n✅ Bot connection successful!\n\n📅 ${now} WIB`;
+  const now = new Date().toLocaleString('id-ID', { timeZone: 'Africa/Dar_Es_Salaam' });
+  const testMessage = `🤖 <b>Skylink - Test Connection</b>\n\n✅ Bot connection successful!\n\n📅 ${now} WIB`;
   
   return await sendTelegramMessage(options, testMessage);
 }

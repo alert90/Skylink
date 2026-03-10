@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Loader2, CheckCircle2, XCircle, Clock, Eye, EyeOff, MapPin, Map } from 'lucide-react';
-import { formatWIB } from '@/lib/timezone';
+import { formatNairobi } from '@/lib/timezone';
 
 interface User {
   id: string;
@@ -456,9 +456,9 @@ export default function UserDetailModal({
                             </span>
                           </div>
                           <p className="text-sm font-medium mt-1">
-                            {formatWIB(session.startTime, 'dd MMM yyyy HH:mm')}
+                            {formatNairobi(session.startTime, 'dd MMM yyyy HH:mm')}
                             {session.stopTime && (
-                              <> - {formatWIB(session.stopTime, 'HH:mm')}</>
+                              <> - {formatNairobi(session.stopTime, 'HH:mm')}</>
                             )}
                           </p>
                           {session.macAddress && session.macAddress !== '-' && (
@@ -514,7 +514,7 @@ export default function UserDetailModal({
                         <div>
                           <p className="text-sm font-medium">{log.reply}</p>
                           <p className="text-xs text-gray-500">
-                            {formatWIB(log.authdate, 'dd MMM yyyy HH:mm:ss')}
+                            {formatNairobi(log.authdate, 'dd MMM yyyy HH:mm:ss')}
                           </p>
                         </div>
                       </div>
@@ -555,11 +555,11 @@ export default function UserDetailModal({
                         <div>
                           <p className="font-medium">{invoice.invoiceNumber}</p>
                           <p className="text-sm text-gray-500 mt-1">
-                            Due: {formatWIB(invoice.dueDate, 'dd MMM yyyy')}
+                            Due: {formatNairobi(invoice.dueDate, 'dd MMM yyyy')}
                           </p>
                           {invoice.paidAt && (
                             <p className="text-xs text-green-600 mt-1">
-                              Paid: {formatWIB(invoice.paidAt, 'dd MMM yyyy')}
+                              Paid: {formatNairobi(invoice.paidAt, 'dd MMM yyyy')}
                             </p>
                           )}
                         </div>
@@ -567,7 +567,7 @@ export default function UserDetailModal({
                           <p className="font-bold text-lg">
                             {new Intl.NumberFormat('id-ID', {
                               style: 'currency',
-                              currency: 'IDR',
+                              currency: 'TZS',
                               minimumFractionDigits: 0,
                             }).format(invoice.amount)}
                           </p>

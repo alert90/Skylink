@@ -347,7 +347,7 @@ async function createVoucherPayment(order: any, gateway: string) {
             mobileNumber: customerPhone
           },
           invoiceDuration: 86400,
-          currency: 'IDR',
+          currency: 'TZS',
           reminderTime: 1,
           successRedirectUrl: `${baseUrl}/evoucher/pay/${order.paymentToken}?status=success`,
           failureRedirectUrl: `${baseUrl}/evoucher/pay/${order.paymentToken}?status=failed`

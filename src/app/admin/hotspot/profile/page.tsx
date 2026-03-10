@@ -196,7 +196,7 @@ export default function HotspotProfilePage() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
-      currency: 'IDR',
+      currency: 'TZS',
       minimumFractionDigits: 0,
     }).format(amount)
   }
@@ -443,7 +443,7 @@ export default function HotspotProfilePage() {
           </CardHeader>
           <CardContent>
             <div className="text-lg font-bold">
-              {profiles.length > 0 ? formatCurrency(profiles.reduce((sum, p) => sum + p.sellingPrice, 0) / profiles.length) : 'Rp 0'}
+              {profiles.length > 0 ? formatCurrency(profiles.reduce((sum, p) => sum + p.sellingPrice, 0) / profiles.length) : formatCurrency(0)}
             </div>
           </CardContent>
         </Card>

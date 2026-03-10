@@ -84,10 +84,10 @@ export async function POST(request: NextRequest) {
 
     // Get company name
     const company = await prisma.company.findFirst();
-    const companyName = company?.name || 'AIBILL RADIUS';
+    const companyName = company?.name || 'SKYLINK RADIUS';
 
     // Send OTP via WhatsApp
-    const message = `Kode OTP Anda: ${otpCode}\n\nBerlaku ${settings?.otpExpiry || 5} menit.\nJangan bagikan kode ini kepada siapapun.\n\n- ${companyName}\n\n By AIBILL RADIUS`;
+    const message = `Your OTP Code: ${otpCode}\n\nValid ${settings?.otpExpiry || 5} minutes.\nDo not share this code with anyone.\n\n- ${companyName}\n\n By SKYLINK RADIUS`;
 
     try {
       await WhatsAppService.sendMessage({

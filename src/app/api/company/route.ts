@@ -10,12 +10,12 @@ export async function GET() {
     if (!company) {
       // Return default if no company exists
       return NextResponse.json({
-        name: 'MWAKIDENIS-BILLING RADIUS',
-        email: 'mwakidenis50@gmail.com',
-        phone: '+254 798-750-585',
-        address: 'Nairobi, Kenya',
+        name: 'Skylink',
+        email: 'dickx005@gmail.com',
+        phone: '+255 778-884-955',
+        address: 'Dar Es Salaam, Tanzania',
         baseUrl: 'http://localhost:3000',
-        adminPhone: '+62 812-3456-7890',
+        adminPhone: '+255 620-814-005',
         logo: null,
       });
     }

@@ -47,8 +47,8 @@ Pendaftaran Anda telah disetujui!
 *Detail Akun:*
 Username: {{username}}
 Password: {{password}}
-Paket: {{profileName}}
-Biaya Instalasi: {{installationFee}}
+Profile: {{profileName}}
+Installation Fee: {{installationFee}}
 
 Silakan lakukan pembayaran instalasi untuk aktivasi.
 
